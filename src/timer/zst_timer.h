@@ -111,6 +111,13 @@ void zst_timer_set_repeat_count(zst_timer_t *timer, int32_t repeat_count);
 void zst_timer_ready(zst_timer_t *timer);
 
 /**
+ * 获取定时器的用户数据
+ * @param timer 定时器指针
+ * @return 用户数据指针
+ */
+void * zst_timer_get_user_data(zst_timer_t *timer);
+
+/**
  * 重置定时器，使其下次在 period 毫秒后再次触发
  * @param timer 定时器指针
  */

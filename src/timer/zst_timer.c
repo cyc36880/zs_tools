@@ -102,6 +102,13 @@ void zst_timer_ready(zst_timer_t *timer)
         timer->ready = true;
 }
 
+void * zst_timer_get_user_data(zst_timer_t *timer)
+{
+    if (timer)
+        return timer->user_data;
+    return NULL;
+}
+
 void zst_timer_reset(zst_timer_t *timer)
 {
     if (timer)
