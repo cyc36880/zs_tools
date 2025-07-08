@@ -8,20 +8,20 @@
 extern uint32_t zst_tick_get(void);
 extern uint32_t zst_tick_elaps(uint32_t prev_tick);
 
-static zst_timer_t *timer_list = NULL;
-static bool timer_enabled = true;
-static uint32_t last_idle_tick = 0;
-static uint32_t idle_time_acc = 0;
+// static zst_timer_t *timer_list = NULL;
+// static bool timer_enabled = true;
+// static uint32_t last_idle_tick = 0;
+// static uint32_t idle_time_acc = 0;
 
-void zst_timer_core_init(void)
+void zst_timer_core_init(ztimer_t *ztimer)
 {
-    timer_list = NULL;
-    timer_enabled = true;
-    last_idle_tick = zst_tick_get();
-    idle_time_acc = 0;
+    ztimer->timer_list = NULL;
+    ztimer->timer_enabled = true;
+    ztimer->last_idle_tick = zst_tick_get();
+    ztimer->idle_time_acc = 0;
 }
 
-zst_timer_t *zst_timer_create_basic(void)
+zst_timer_t *zst_timer_create_basic(ztimer_t *ztimer)
 {
     zst_timer_t *timer = (zst_timer_t *)zst_mem_calloc(1, sizeof(zst_timer_t));
     if (!timer)
@@ -32,14 +32,14 @@ zst_timer_t *zst_timer_create_basic(void)
     timer->last_run = zst_tick_get();
 
     // 插入链表头
-    timer->next = timer_list;
-    timer_list = timer;
+    timer->next = ztimer->timer_list;
+    ztimer->timer_list = timer;
     return timer;
 }
 
-zst_timer_t *zst_timer_create(zst_timer_cb_t cb, uint32_t period, void *user_data)
+zst_timer_t *zst_timer_create(ztimer_t *ztimer, zst_timer_cb_t cb, uint32_t period, void *user_data)
 {
-    zst_timer_t *timer = zst_timer_create_basic();
+    zst_timer_t *timer = zst_timer_create_basic(ztimer);
     if (!timer)
         return NULL;
     timer->cb = cb;
@@ -48,9 +48,9 @@ zst_timer_t *zst_timer_create(zst_timer_cb_t cb, uint32_t period, void *user_dat
     return timer;
 }
 
-void zst_timer_del(zst_timer_t *timer)
+void zst_timer_del(ztimer_t *ztimer, zst_timer_t *timer)
 {
-    zst_timer_t **curr = &timer_list;
+    zst_timer_t **curr = &(ztimer->timer_list);
     while (*curr)
     {
         if (*curr == timer)
@@ -115,38 +115,38 @@ void zst_timer_reset(zst_timer_t *timer)
         timer->last_run = zst_tick_get();
 }
 
-void zst_timer_enable(bool en)
+void zst_timer_enable(ztimer_t *ztimer, bool en)
 {
-    timer_enabled = en;
+    ztimer->timer_enabled = en;
 }
 
-uint8_t zst_timer_get_idle(void)
+uint8_t zst_timer_get_idle(ztimer_t *ztimer)
 {
     uint32_t now = zst_tick_get();
-    uint32_t total = now - last_idle_tick;
-    last_idle_tick = now;
-    uint32_t idle = idle_time_acc;
-    idle_time_acc = 0;
+    uint32_t total = now - ztimer->last_idle_tick;
+    ztimer->last_idle_tick = now;
+    uint32_t idle = ztimer->idle_time_acc;
+    ztimer->idle_time_acc = 0;
     if (total == 0)
         return 100;
     return (uint8_t)((idle * 100) / total);
 }
 
-zst_timer_t *zst_timer_get_next(zst_timer_t *timer)
+zst_timer_t *zst_timer_get_next(ztimer_t *ztimer, zst_timer_t *timer)
 {
-    return timer ? timer->next : timer_list;
+    return timer ? timer->next : ztimer->timer_list;
 }
 
-uint32_t zst_timer_handler(void)
+uint32_t zst_timer_handler(ztimer_t *ztimer)
 {
-    if (!timer_enabled)
+    if (!ztimer->timer_enabled)
         return 10;
 
     uint32_t now = zst_tick_get();
     uint32_t min_wait = 0xFFFFFFFF;
     bool idle = true;
 
-    for (zst_timer_t *t = timer_list; t != NULL; t = t->next)
+    for (zst_timer_t *t = ztimer->timer_list; t != NULL; t = t->next)
     {
         if (t->paused || !t->cb)
             continue;
@@ -183,20 +183,20 @@ uint32_t zst_timer_handler(void)
     if (idle)
     {
         uint32_t idle_start = zst_tick_get();
-        idle_time_acc += zst_tick_elaps(idle_start);
+        ztimer->idle_time_acc += zst_tick_elaps(idle_start);
     }
 
     return min_wait;
 }
 
-uint32_t zst_timer_handler_run_in_period(uint32_t ms)
+uint32_t zst_timer_handler_run_in_period(ztimer_t *ztimer, uint32_t ms)
 {
     static uint32_t last_tick = 0;
     uint32_t now = zst_tick_get();
     if (zst_tick_elaps(last_tick) >= ms)
     {
         last_tick = now;
-        return zst_timer_handler();
+        return zst_timer_handler(ztimer);
     }
     return 1;
 }

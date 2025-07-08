@@ -3,30 +3,22 @@
 #include "task.h"
 #include "esp_task_wdt.h"
 
-#include "../lib/zs_tools/zs_tool.h"
+#include "zst_core.h"
 
-
-void zst_timer_cb(zst_timer_t *timer)
+void zst_timer(zst_timer_t *timer)
 {
-    zst_timer_del(timer);
-    Serial.printf("timer_cb : %p\n", timer->user_data);
+    ZST_LOGI("123", "timer expired");
 }
-
-
 
 void setup()
 {
     Serial.begin(115200);
     zst_init();
-    zst_timer_t *timer = zst_timer_create(zst_timer_cb, 1000, NULL);
-    zst_timer_create(zst_timer_cb, 1000, NULL);
-    zst_timer_set_repeat_count(timer, 10);
-    zst_timer_ready(timer);
+    zst_timer_create(&zst_ztimer, zst_timer, 1000, NULL);
 }
 
 void loop()
 {
     zst_task_handler();
-    delay(100);
 }
 

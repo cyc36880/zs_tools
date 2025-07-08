@@ -31,30 +31,39 @@ struct _zst_timer_t
     zst_timer_t *next; /**< 链表指针 */
 };
 
+typedef struct 
+{
+    zst_timer_t *timer_list;
+    uint32_t last_idle_tick;
+    uint32_t idle_time_acc;
+    bool timer_enabled;
+} ztimer_t;
+
+
 /**
  * 初始化软件定时器模块
  */
-void zst_timer_core_init(void);
+void zst_timer_core_init(ztimer_t *ztimer);
 
 /**
  * 定期调用以处理所有定时器
  * @return 下一次需要调用 handler 的最小等待时间（单位：ms）
  */
-uint32_t zst_timer_handler(void);
+uint32_t zst_timer_handler(ztimer_t *ztimer);
 
 /**
  * 以固定周期运行定时器处理函数
  * @param ms 执行周期（单位：ms）
  * @return 剩余时间（如果未执行）或下一次调度间隔
  */
-uint32_t zst_timer_handler_run_in_period(uint32_t ms);
+uint32_t zst_timer_handler_run_in_period(ztimer_t *ztimer, uint32_t ms);
 
 /**
  * 创建一个空的定时器
  * @return 指向新定时器的指针
  * @note 需手动设置回调和周期
  */
-zst_timer_t *zst_timer_create_basic(void);
+zst_timer_t *zst_timer_create_basic(ztimer_t *ztimer);
 
 /**
  * 创建一个新的软件定时器
@@ -63,13 +72,13 @@ zst_timer_t *zst_timer_create_basic(void);
  * @param user_data 用户参数指针
  * @return 指向新定时器的指针
  */
-zst_timer_t *zst_timer_create(zst_timer_cb_t cb, uint32_t period, void *user_data);
+zst_timer_t *zst_timer_create(ztimer_t *ztimer, zst_timer_cb_t cb, uint32_t period, void *user_data);
 
 /**
  * 删除一个定时器
  * @param timer 要删除的定时器指针
  */
-void zst_timer_del(zst_timer_t *timer);
+void zst_timer_del(ztimer_t *ztimer, zst_timer_t *timer);
 
 /**
  * 暂停一个定时器
@@ -127,20 +136,20 @@ void zst_timer_reset(zst_timer_t *timer);
  * 启用或禁用所有定时器的处理
  * @param en true：启用；false：禁用
  */
-void zst_timer_enable(bool en);
+void zst_timer_enable(ztimer_t *ztimer, bool en);
 
 /**
  * 获取定时器模块的“空闲率”（用于估算 CPU 占用）
  * @return 空闲百分比（0~100）
  */
-uint8_t zst_timer_get_idle(void);
+uint8_t zst_timer_get_idle(ztimer_t *ztimer);
 
 /**
  * 遍历所有定时器
  * @param timer NULL 表示开始遍历，或传入上一个定时器
  * @return 下一个定时器指针，若无更多定时器则返回 NULL
  */
-zst_timer_t *zst_timer_get_next(zst_timer_t *timer);
+zst_timer_t *zst_timer_get_next(ztimer_t *ztimer, zst_timer_t *timer);
 #endif // ZST_TIMER_H
 
 #ifdef __cplusplus

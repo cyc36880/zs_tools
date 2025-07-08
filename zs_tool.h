@@ -12,6 +12,7 @@ extern "C" {
 #include "./src/misc/zst_mem.h"
 #include "./src/timer/zst_timer.h"
 #include "./src/event/zst_event.h"
+#include "./src/run_one/run_one.h"
 
 
 #ifdef __cplusplus

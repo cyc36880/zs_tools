@@ -7,23 +7,29 @@ extern "C" {
 
 #include "stdint.h"
 #include "stdbool.h"
-
+#include <stddef.h>
 
 #define ZST_USE_ALLOC    1
 #define ZST_TICK_CUSTOM  1
 #define ZST_USE_LOG      0
 #define ZST_USE_TIMER    0
 #define ZST_USE_EVENT    0
-
+#define ZST_RUN_ONE      0
 
 
 
 
 #if ZST_USE_ALLOC
-    #define ZST_MEM_CUSTOM_INCLUDE     "stdlib.h"
-    #define ZST_MEM_CUSTOM_ALLOC(x)     malloc(x)
-    #define ZST_MEM_CUSTOM_FREE(x)      free(x)
-    #define ZST_MEM_CUSTOM_REALLOC(x,y) realloc(x,y)
+    #define ZST_MEM_CUSTOM 1
+    #if (ZST_MEM_CUSTOM)
+        #define ZST_MEM_CUSTOM_INCLUDE     "stdlib.h"
+        #define ZST_MEM_CUSTOM_ALLOC(x)     malloc(x)
+        #define ZST_MEM_CUSTOM_FREE(x)      free(x)
+        #define ZST_MEM_CUSTOM_REALLOC(x,y) realloc(x,y)
+    #else
+        // for how many k bytes
+        #define ZST_MEM_SIZE (30)
+    #endif
 #endif
 
 /*Use a custom tick source that tells the elapsed time in milliseconds.

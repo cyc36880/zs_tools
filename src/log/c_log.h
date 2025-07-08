@@ -6,6 +6,10 @@ extern "C"
 {
 #endif
 
+#include "../../../zst_conf.h"
+
+#if (ZST_USE_LOG == 1)
+
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -14,32 +18,28 @@ extern "C"
 #include <stdlib.h>
 #include <assert.h>
 
-#include "../../../zst_conf.h"
+typedef enum
+{
+    E_LOGE = 1,
+    E_LOGW,
+    E_LOGI,
+    E_LOGD,
+    E_LOGV,
+} LOG_LEVEL_E;
 
-#if (ZST_USE_LOG == 1)
+typedef enum
+{
+    LOG_NONE,   /*!< No log output */
+    LOG_ERROR,  /*!< Critical errors, software module can not recover on its own */
+    LOG_WARN,   /*!< Error conditions from which recovery measures have been taken */
+    LOG_INFO,   /*!< Information messages which describe normal flow of events */
+    LOG_DEBUG,  /*!< Extra information which is not necessary for normal use (values, pointers, sizes, etc). */
+    LOG_VERBOSE /*!< Bigger chunks of debugging information, or frequent messages which can potentially flood the output. */
+} log_level_t;
 
-    typedef enum
-    {
-        E_LOGE = 1,
-        E_LOGW,
-        E_LOGI,
-        E_LOGD,
-        E_LOGV,
-    } LOG_LEVEL_E;
+void log_write(log_level_t level, const char *tag, const char *format, ...) __attribute__((format(printf, 3, 4)));
 
-    typedef enum
-    {
-        LOG_NONE,   /*!< No log output */
-        LOG_ERROR,  /*!< Critical errors, software module can not recover on its own */
-        LOG_WARN,   /*!< Error conditions from which recovery measures have been taken */
-        LOG_INFO,   /*!< Information messages which describe normal flow of events */
-        LOG_DEBUG,  /*!< Extra information which is not necessary for normal use (values, pointers, sizes, etc). */
-        LOG_VERBOSE /*!< Bigger chunks of debugging information, or frequent messages which can potentially flood the output. */
-    } log_level_t;
-
-    void log_write(log_level_t level, const char *tag, const char *format, ...) __attribute__((format(printf, 3, 4)));
-
-    uint32_t log_timestamp(void);
+uint32_t log_timestamp(void);
 
 #define LOG_COLOR_BLACK "30"
 #define LOG_COLOR_RED "31"

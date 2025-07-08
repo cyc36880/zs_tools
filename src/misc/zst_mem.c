@@ -1,7 +1,11 @@
 #include "zst_mem.h"
 #include "../../../zst_conf.h"
-#if ZST_USE_ALLOC
-    #include ZST_MEM_CUSTOM_INCLUDE
+#if ZST_USE_ALLOC==1
+    #if ZST_MEM_CUSTOM==1
+        #include ZST_MEM_CUSTOM_INCLUDE
+    #elif ZST_MEM_CUSTOM==0
+        #include "./tlsf/mm_tlsf.h"
+    #endif
 #endif
 
 
@@ -22,7 +26,11 @@ void zst_memset_00(void * dst, size_t len)
 void * zst_mem_alloc(size_t size)
 {
     #if ZST_USE_ALLOC
-        return ZST_MEM_CUSTOM_ALLOC(size);
+        #if ZST_MEM_CUSTOM==1
+            return ZST_MEM_CUSTOM_ALLOC(size);
+        #elif ZST_MEM_CUSTOM==0
+            return mm_alloc(size);
+        #endif
     #else
         return NULL;
     #endif
@@ -30,9 +38,13 @@ void * zst_mem_alloc(size_t size)
 void * zst_mem_calloc(size_t nmemb, size_t size)
 {
     #if ZST_USE_ALLOC
-        void * ptr = zst_mem_alloc(nmemb * size);
-        if (ptr)
+        #if ZST_MEM_CUSTOM==1
+            void * ptr = zst_mem_alloc(nmemb * size);
+            if (ptr)
             zst_memset_00(ptr, nmemb * size);
+        #elif ZST_MEM_CUSTOM==0
+            void * ptr = mm_calloc(nmemb, size);
+        #endif
         return ptr;
     #else
         return NULL;
@@ -42,14 +54,22 @@ void * zst_mem_calloc(size_t nmemb, size_t size)
 void zst_mem_free(void * ptr)
 {
     #if ZST_USE_ALLOC
-        ZST_MEM_CUSTOM_FREE(ptr);
+        #if ZST_MEM_CUSTOM==1
+            ZST_MEM_CUSTOM_FREE(ptr);
+        #elif ZST_MEM_CUSTOM==0
+            mm_free(ptr);
+        #endif
     #endif
 }
 
 void * zst_mem_realloc(void * ptr, size_t size)
 {
     #if ZST_USE_ALLOC
-        return ZST_MEM_CUSTOM_REALLOC(ptr, size);
+        #if ZST_MEM_CUSTOM==1
+            return ZST_MEM_CUSTOM_REALLOC(ptr, size);
+        #elif ZST_MEM_CUSTOM==0
+            return mm_realloc(ptr, size);
+        #endif
     #else
         return NULL;
     #endif
