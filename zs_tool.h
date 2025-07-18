@@ -13,6 +13,7 @@ extern "C" {
 #include "./src/timer/zst_timer.h"
 #include "./src/event/zst_event.h"
 #include "./src/run_one/run_one.h"
+#include "./src/polling_tasks/polling_task.h"
 
 
 #ifdef __cplusplus
