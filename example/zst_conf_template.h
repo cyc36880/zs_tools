@@ -10,12 +10,12 @@ extern "C" {
 #include <stddef.h>
 
 #define ZST_USE_ALLOC    1
-#define ZST_TICK_CUSTOM  1
+#define ZST_TICK_CUSTOM  0
 #define ZST_USE_LOG      0
 #define ZST_USE_TIMER    0
 #define ZST_USE_EVENT    0
 #define ZST_RUN_ONE      0
-
+#define ZST_USE_PTASK    0
 
 
 

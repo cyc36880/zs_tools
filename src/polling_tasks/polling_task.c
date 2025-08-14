@@ -1,4 +1,7 @@
 #include "polling_task.h"
+
+#if (ZST_USE_PTASK == 1)
+
 #include <string.h>
 #include "../misc/zst_mem.h"
 // #include "stdio.h"
@@ -10,10 +13,16 @@ enum PTASK_STATE
 };
 
 
+static void ptask_recursion(const ptask_t * ptask_root, enum PTASK_STATE state);
+
+
+
 int ptask_init(ptask_list_t * ptask_list)
 {
     zst_memset_00(ptask_list, sizeof(ptask_list_t));
-    ptask_list->current_task_id = SIZE_MAX;
+    ptask_list->current_task = NULL;
+    ptask_list->state = PTASK_IDLE;
+    ptask_list->auto_start = 1;
     return 0;
 }
 
@@ -26,6 +35,7 @@ ptask_t * ptask_root_create(ptask_list_t * ptask_list, const ptask_base_t * ptas
         return NULL;
     }
     zst_memset_00(ptask, sizeof(ptask_t));
+    memcpy(&ptask->base, ptask_base, sizeof(ptask_base_t));
     if (0 == ptask_list->size)
     {
         ptask_list->array = zst_mem_alloc(sizeof(ptask_t *));
@@ -49,7 +59,8 @@ ptask_t * ptask_root_create(ptask_list_t * ptask_list, const ptask_base_t * ptas
         ptask_list->array[ptask_list->size] = ptask;
         ptask_list->size++;
     }
-    return NULL;
+
+    return ptask;
 }
 
 ptask_t * ptask_create(ptask_t * ptask_parent, const ptask_base_t * ptask_base)
@@ -72,10 +83,21 @@ ptask_t * ptask_create(ptask_t * ptask_parent, const ptask_base_t * ptask_base)
     return ptask;
 }
 
-// 递归加载
-static void ptask_recursion_load(ptask_t * ptask_root)
+
+int ptask_start(ptask_list_t * ptask_list, const ptask_t * ptask_root)
 {
-    for (ptask_t * ptask = ptask_root; NULL != ptask; ptask = ptask->next)
+    ptask_recursion(ptask_list->current_task, PTASK_STATE_EXIT);
+    ptask_recursion(ptask_root, PTASK_STATE_LOAD);
+    ptask_list->current_task = (ptask_t *)ptask_root;
+    ptask_list->state = PTASK_RUNNING;
+    return 0;
+}
+
+
+// 递归加载
+static void ptask_recursion_load(const ptask_t * ptask_root)
+{
+    for (ptask_t * ptask = (ptask_t *)ptask_root; NULL != ptask; ptask = ptask->next)
     {
         if (ptask->base.load)
         {
@@ -85,11 +107,10 @@ static void ptask_recursion_load(ptask_t * ptask_root)
 }
 
 // 递归运行
-static void ptask_recursion_run(ptask_t * ptask_root)
+static void ptask_recursion_run(const ptask_t * ptask_root)
 {
-    for (ptask_t * ptask = ptask_root; NULL != ptask; ptask = ptask->next)
+    for (ptask_t * ptask = (ptask_t *)ptask_root; NULL != ptask; ptask = ptask->next)
     {
-        // printf("ptask_recursion_run: %p\n", ptask);
         if (ptask->base.run)
         {
             ptask->base.run(ptask);
@@ -98,9 +119,9 @@ static void ptask_recursion_run(ptask_t * ptask_root)
 }
 
 // 递归退出
-static void ptask_recursion_exit(ptask_t * ptask_root)
+static void ptask_recursion_exit(const ptask_t * ptask_root)
 {
-    for (ptask_t * ptask = ptask_root; NULL != ptask; ptask = ptask->next)
+    for (ptask_t * ptask = (ptask_t *)ptask_root; NULL != ptask; ptask = ptask->next)
     {
         if (ptask->base.exit)
         {
@@ -110,7 +131,7 @@ static void ptask_recursion_exit(ptask_t * ptask_root)
 }
 
 
-static void ptask_recursion(ptask_t * ptask_root, enum PTASK_STATE state)
+static void ptask_recursion(const ptask_t * ptask_root, enum PTASK_STATE state)
 {
     if (NULL == ptask_root)
     {
@@ -134,17 +155,24 @@ static void ptask_recursion(ptask_t * ptask_root, enum PTASK_STATE state)
 
 int ptask_run(ptask_list_t * ptask_list)
 {
-    if (NULL == ptask_list->array || ptask_list->current_task_id==SIZE_MAX)
+    if (NULL == ptask_list->array)
     {
         return -1;
     }
 
-    if (ptask_list->current_task_id >= ptask_list->size)
+    if (1 == ptask_list->auto_start && PTASK_IDLE == ptask_list->state)
+    {
+        ptask_start(ptask_list, ptask_list->array[0]);
+    }
+
+    if (NULL == ptask_list->current_task)
     {
         return -2;
     }
-
-    ptask_recursion(ptask_list->array[ptask_list->current_task_id], PTASK_STATE_RUN);
+   
+    ptask_recursion(ptask_list->current_task, PTASK_STATE_RUN);
 
     return 0;
 }
+
+#endif /* ZST_USE_PTASK */
