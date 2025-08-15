@@ -39,7 +39,6 @@ static int cc_list_map_move_to_item(cc_list_map_t *self, void *key)
 int cc_list_map_get(cc_list_map_t *self, void *key, void **result)
 {
 	cc_map_item_t *item;
-	int code;
 
 	if (try_reset_double_p(result))
 		return 1;
@@ -76,8 +75,6 @@ fail1:
 
 int cc_list_map_set_new(cc_list_map_t *self, void *key, void *value)
 {
-	cc_map_item_t *item;
-
 	if (!cc_list_map_move_to_item(self, key))
 		return CC_MAP_KEY_ALREADY_EXIST;
 	if (cc_list_map_insert_new(self, key, value))

@@ -52,7 +52,7 @@ int cc_array_chain_to_array(cc_array_chain_t *self,
 {
 	cc_list_iter_t iter;
 	cc_array_t *r, **tmp;
-	size_t i, size;
+	size_t i;
 
 	if (cc_array_new(&r, self->total_nums + nums_to_reserve,
 				self->node_elem_size))
@@ -94,8 +94,8 @@ int cc_array_chain_new(cc_array_chain_t **self, int node_elem_nums,
 	*self = tmp;
 	return 0;
 
-fail3:
-	cc_list_delete(tmp->node_chain);
+//fail3:
+//	cc_list_delete(tmp->node_chain);
 fail2:
 	free(tmp);
 fail1:

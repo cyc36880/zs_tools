@@ -40,8 +40,8 @@ int cc_list_queue_new(cc_list_queue_t **self)
 
 	*self = tmp;
 	return 0;
-fail3:
-	cc_list_delete(tmp->list);
+//fail3:
+//	cc_list_delete(tmp->list);
 fail2:
 	free(tmp);
 fail1:

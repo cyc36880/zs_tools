@@ -65,8 +65,8 @@ int cc_string_builder_new(cc_string_builder_t **self)
 	*self = tmp;
 	return 0;
 
-fail3:
-	cc_array_chain_delete(tmp->chain);
+//fail3:
+//	cc_array_chain_delete(tmp->chain);
 fail2:
 	free(tmp);
 fail1:
@@ -85,7 +85,6 @@ int cc_string_builder_delete(cc_string_builder_t *self)
 int cc_string_concat(char **result, int n, ...)
 {
 	cc_string_builder_t *string_builder;
-	char *tmp;
 	va_list args;
 
 	if (cc_string_builder_new(&string_builder))

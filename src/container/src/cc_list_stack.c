@@ -41,8 +41,8 @@ int cc_list_stack_new(cc_list_stack_t **self)
 
 	*self = tmp;
 	return 0;
-fail3:
-	cc_list_delete(tmp->list);
+//fail3:
+//	cc_list_delete(tmp->list);
 fail2:
 	free(tmp);
 fail1:
