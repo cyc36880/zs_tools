@@ -35,7 +35,9 @@ ptask_t * ptask_root_create(ptask_list_t * ptask_list, const ptask_base_t * ptas
         return NULL;
     }
     zst_memset_00(ptask, sizeof(ptask_t));
-    memcpy(&ptask->base, ptask_base, sizeof(ptask_base_t));
+    zst_memset_00(&ptask->base, sizeof(ptask_base_t));
+    if (NULL != ptask_base)
+        memcpy(&ptask->base, ptask_base, sizeof(ptask_base_t));
     if (0 == ptask_list->size)
     {
         ptask_list->array = zst_mem_alloc(sizeof(ptask_t *));
@@ -71,8 +73,9 @@ ptask_t * ptask_create(ptask_t * ptask_parent, const ptask_base_t * ptask_base)
         return NULL;
     }
     zst_memset_00(ptask, sizeof(ptask_t));
-    memcpy(&ptask->base, ptask_base, sizeof(ptask_base_t));
-
+    zst_memset_00(&ptask->base, sizeof(ptask_base_t));
+    if (NULL != ptask_base)
+        memcpy(&ptask->base, ptask_base, sizeof(ptask_base_t));
     ptask_t * ptask_temp = ptask_parent;
     for ( ; NULL != ptask_temp->next; ptask_temp = ptask_temp->next)
     {

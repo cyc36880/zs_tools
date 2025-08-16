@@ -15,6 +15,9 @@ void zst_task_handler(void);
     extern ztimer_t zst_ztimer;
 #endif
 
+#if (ZST_USE_PTASK == 1)
+    extern ptask_list_t zst_ptask_list;
+#endif
 
 #ifdef __cplusplus
 }

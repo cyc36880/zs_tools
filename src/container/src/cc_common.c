@@ -56,7 +56,7 @@ void cc_exit_info(int code, char *format, ...)
 	va_start(args, format);
 	vfprintf(stderr, format, args);
 	va_end(args);
-	exit(code);
+	// exit(code);
 }
 
 void cc_debug_print(char *format, ...)
