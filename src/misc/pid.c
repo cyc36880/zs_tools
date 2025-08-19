@@ -2,6 +2,8 @@
 
 #if (ZST_USE_PID == 1)
 
+#include "./zst_mem.h"
+
 pid_t *pid_init(pid_t *p_pid, uint32_t maxVal, float P, float I, float D)
 {
     zst_memset_00(p_pid, sizeof(pid_t)); // 内存清空
