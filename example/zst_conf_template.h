@@ -9,13 +9,15 @@ extern "C" {
 #include "stdbool.h"
 #include <stddef.h>
 
-#define ZST_USE_ALLOC    1
+#define ZST_USE_ALLOC    0
 #define ZST_TICK_CUSTOM  0
 #define ZST_USE_LOG      0
 #define ZST_USE_TIMER    0
 #define ZST_USE_EVENT    0
 #define ZST_RUN_ONE      0
 #define ZST_USE_PTASK    0
+#define ZST_USE_REGISTER 0
+#define ZST_USE_PID      0
 
 
 
@@ -55,6 +57,16 @@ extern "C" {
                              ZST_EVENTR_1
 #endif
 
+#if (ZST_USE_REGISTER == 1)
+    // 0:addr8, 1:addr16
+    #define ZST_REGISTER_ADDR16    0
+    #define SZT_TRGISTER_USE_NAME  1
+#endif
+
+#if (ZST_USE_PID == 1)
+    // only float or double
+    #define ZST_PID_CALC_TYPE  float
+#endif
 
 #ifdef __cplusplus
 } /*extern "C"*/
