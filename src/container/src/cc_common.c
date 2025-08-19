@@ -50,7 +50,7 @@ void cc_print_n(char *s, int n)
 		cc_debug_print("%s", s);
 }
 
-void cc_exit_info(int code, char *format, ...)
+void cc_exit_info(int code, const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -59,7 +59,7 @@ void cc_exit_info(int code, char *format, ...)
 	// exit(code);
 }
 
-void cc_debug_print(char *format, ...)
+void cc_debug_print(const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);

@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
-#include <stddef.h>
-#include <string.h>
+#include "../zs_tool.h"
 
 /**
  * Same as `memset` but optimized for 4 byte operation.

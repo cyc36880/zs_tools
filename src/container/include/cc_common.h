@@ -51,8 +51,8 @@ size_t cc_str_hash_fn_bkdr(void *obj);
 /* Call `free` and return 0. */
 int cc_default_delete_fn(void *obj);
 
-void cc_exit_info(int code, char *format, ...);
-void cc_debug_print(char *format, ...);
+void cc_exit_info(int code, const char *format, ...);
+void cc_debug_print(const char *format, ...);
 void cc_print_n(char *s, int n);
 
 #endif

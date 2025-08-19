@@ -5,7 +5,7 @@
 extern "C" {
 #endif    
 
-#include "./src/zst_core.h"
+#include "../zst_conf.h"
 #include "./src/container/include/cc_all.h"
 #include "./src/hal/zst_hal.h"
 #include "./src/log/c_log.h"

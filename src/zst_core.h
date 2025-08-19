@@ -5,8 +5,7 @@
 extern "C" {
 #endif    
 
-#include "../../zst_conf.h"
-#include "../zs_tool.h"
+// #include "./zs_tool.h"
 
 void zst_init(void);
 void zst_task_handler(void);

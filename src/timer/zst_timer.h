@@ -5,7 +5,7 @@
 extern "C"
 {
 #endif
-#include "../../../zst_conf.h"
+#include "../zs_tool.h"
 #if (ZST_USE_TIMER == 1)
 
 #include "../hal/zst_hal.h"

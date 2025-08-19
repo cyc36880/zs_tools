@@ -6,8 +6,7 @@ extern "C"
 {
 #endif
 
-#include <stdint.h>
-#include <stddef.h>
+#include "../zs_tool.h"
 
 typedef struct
 {
