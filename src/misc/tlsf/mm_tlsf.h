@@ -1,7 +1,7 @@
 #ifndef __MM_TLSF_H__
 #define __MM_TLSF_H__
 
-#include "../../zs_tool.h"
+#include "../../../../zst_conf.h"
 #if (ZST_USE_ALLOC==1 && ZST_MEM_CUSTOM==0)
 
 #ifdef __cplusplus

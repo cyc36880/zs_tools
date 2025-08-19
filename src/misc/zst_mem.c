@@ -1,5 +1,5 @@
 #include "zst_mem.h"
-#include "../zs_tool.h"
+#include "../../../zst_conf.h"
 #if ZST_USE_ALLOC==1
     #if ZST_MEM_CUSTOM==1
         #include ZST_MEM_CUSTOM_INCLUDE

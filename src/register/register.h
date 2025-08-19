@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "../zs_tool.h"
+#include "../../../zst_conf.h"
 #if (ZST_USE_REGISTER == 1)
 
 typedef struct _register_object_

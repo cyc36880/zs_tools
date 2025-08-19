@@ -6,7 +6,7 @@ extern "C"
 {
 #endif
 
-#include "../zs_tool.h"
+#include "../../../zst_conf.h"
 #if (ZST_USE_EVENT == 1)
 /*
 *  #include "zst_event.h"

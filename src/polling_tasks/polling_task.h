@@ -6,7 +6,7 @@ extern "C"
 {
 #endif
 
-#include "../zs_tool.h"
+#include "../../../zst_conf.h"
 
 #if (ZST_USE_PTASK == 1)
 // #include "../container/include/cc_all.h"
@@ -76,10 +76,10 @@ ptask_t * ptask_create(ptask_t *ptask_parent, const ptask_base_t * ptask_base);
 // 会退出上一个任务，并切换到当前任务
 int ptask_start(ptask_list_t * ptask_list, const ptask_t * ptask_root);
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* ZST_USE_PTASK */
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* __POLLING_TASK_H__ */

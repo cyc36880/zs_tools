@@ -1,7 +1,7 @@
 #ifndef __RUN_ONE_H__
 #define __RUN_ONE_H__
 
-#include "../zs_tool.h"
+#include "../../../zst_conf.h"
 
 #if ZST_RUN_ONE==1
 

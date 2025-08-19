@@ -39,7 +39,7 @@
 */
 
 #include <stddef.h>
-#include "../../../zs_tool.h"
+#include "../../../../../zst_conf.h"
 #if (ZST_USE_ALLOC==1 && ZST_MEM_CUSTOM==0)
 #if defined(__cplusplus)
 extern "C" {

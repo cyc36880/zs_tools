@@ -6,7 +6,8 @@
 extern "C" {
 #endif
 
-#include "../zs_tool.h"
+#include "../../../zst_conf.h"
+
 #if (ZST_USE_PID == 1)
 typedef struct
 {
@@ -22,10 +23,10 @@ pid_t *pid_init(pid_t *p_pid, uint32_t maxVal, float P, float I, float D);
 ZST_PID_CALC_TYPE pid_calculation(pid_t *p_pid, ZST_PID_CALC_TYPE nowVal, ZST_PID_CALC_TYPE wantVal);
 
 
+#endif /* ZST_USE_PID */
+
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* ZST_USE_PID */
 #endif /* __PID_H__ */
 
