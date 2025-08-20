@@ -4,9 +4,9 @@
 
 #include "./zst_mem.h"
 
-pid_t *pid_init(pid_t *p_pid, uint32_t maxVal, float P, float I, float D)
+zst_pid_t *pid_init(zst_pid_t *p_pid, uint32_t maxVal, float P, float I, float D)
 {
-    zst_memset_00(p_pid, sizeof(pid_t)); // 内存清空
+    zst_memset_00(p_pid, sizeof(zst_pid_t)); // 内存清空
 
     p_pid->P = P;
     p_pid->I = I;
@@ -22,7 +22,7 @@ pid_t *pid_init(pid_t *p_pid, uint32_t maxVal, float P, float I, float D)
     wantval：欲到达值
     nowval：目前值
 */
-ZST_PID_CALC_TYPE pid_calculation(pid_t *p_pid, ZST_PID_CALC_TYPE nowVal, ZST_PID_CALC_TYPE wantVal)
+ZST_PID_CALC_TYPE pid_calculation(zst_pid_t *p_pid, ZST_PID_CALC_TYPE nowVal, ZST_PID_CALC_TYPE wantVal)
 {
     ZST_PID_CALC_TYPE retval = 0;
     ZST_PID_CALC_TYPE diffval = wantVal - nowVal; // 差值
