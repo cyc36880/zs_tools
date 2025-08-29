@@ -35,7 +35,7 @@ int cc_hash_map_set(cc_hash_map_t *self, void *key, void *value,
 int cc_hash_map_del(cc_hash_map_t *self, void *key,
 		cc_map_item_t **result);
 
-int cc_hash_map_print(cc_hash_map_t *self, char *end_string);
+int cc_hash_map_print_slot(cc_list_map_t *slot, void (*callback)(cc_map_item_t *), int index);
 
 typedef struct cc_hash_map_iter 
 {

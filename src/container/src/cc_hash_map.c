@@ -79,17 +79,17 @@ int cc_hash_map_del(cc_hash_map_t *self, void *key,
 	return cc_list_map_del(*list_map_ref, key, result);
 }
 
-int cc_hash_map_print_slot(cc_list_map_t *slot, int index)
+int cc_hash_map_print_slot(cc_list_map_t *slot, void (*callback)(cc_map_item_t *), int index)
 {
 	cc_debug_print("[% 9d] ", index);
 	if (slot != NULL)
-		return cc_list_map_print(slot, "\n");
+		return cc_list_map_print(slot, callback, "\n");
 
 	cc_debug_print("\n");
 	return 0;
 }
 
-int cc_hash_map_print(cc_hash_map_t *self, char *end_string)
+int cc_hash_map_print(cc_hash_map_t *self, void (*callback)(cc_map_item_t *), char *end_string)
 {
 	cc_array_iter_t iter_titer;
 	cc_list_map_t **item;
@@ -98,7 +98,7 @@ int cc_hash_map_print(cc_hash_map_t *self, char *end_string)
 	if (cc_array_iter_init(&iter_titer, self->data))
 		return 1;
 	while (!cc_iter_next(&iter_titer, &item, NULL))
-		cc_hash_map_print_slot(*item, i++);
+		cc_hash_map_print_slot(*item, callback, i++);
 
 	cc_debug_print("%s", end_string);
 	return 0;

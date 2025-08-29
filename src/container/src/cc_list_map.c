@@ -124,7 +124,7 @@ int cc_list_map_del(cc_list_map_t *self, void *key,
 	return 0;
 }
 
-int cc_list_map_print(cc_list_map_t *self, char *end_string)
+int cc_list_map_print(cc_list_map_t *self, void (*callback)(cc_map_item_t *), char *end_string)
 {
 	cc_list_map_iter_t iter;
 	cc_map_item_t *item;
@@ -133,8 +133,14 @@ int cc_list_map_print(cc_list_map_t *self, char *end_string)
 	if (cc_list_map_iter_init(&iter, self))
 		return 1;
 	while (!cc_iter_next(&iter, &item, &index))
+	{
+		if (callback)
+		{
+			callback(item);
+		}
 		cc_debug_print("(%d){%zu -> %zu} ", index, item->key,
 				item->value);
+	}
 
 	cc_debug_print("%s", end_string);
 	return 0;
@@ -160,10 +166,13 @@ int cc_list_map_new(cc_list_map_t **self, cc_cmp_fn_t cmp)
 	return 0;
 
 fail3:
+	printf("fail3\n");
 	cc_list_delete(tmp->data);
 fail2:
+	printf("fail2\n");
 	free(tmp);
 fail1:
+	printf("fail1\n");
 	return 1;
 }
 

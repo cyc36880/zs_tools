@@ -5,7 +5,7 @@
 
 
 
-void log_write(log_level_t level, const char *tag, const char *format, ...)
+void clog_write(log_level_t level, const char *tag, const char *format, ...)
 {
     va_list arg;
     va_start(arg, format);
@@ -13,7 +13,7 @@ void log_write(log_level_t level, const char *tag, const char *format, ...)
     va_end(arg);
 }
 
-uint32_t log_timestamp()
+uint32_t clog_timestamp()
 {
     return zst_tick_get();
 }

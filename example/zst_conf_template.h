@@ -18,7 +18,7 @@ extern "C" {
 #define ZST_USE_PTASK    0
 #define ZST_USE_REGISTER 0
 #define ZST_USE_PID      0
-
+#define ZST_SHA256       1
 
 
 #if ZST_USE_ALLOC

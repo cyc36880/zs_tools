@@ -26,7 +26,7 @@ int cc_list_map_set_new(cc_list_map_t *self, void *key, void *value);
 int cc_list_map_del(cc_list_map_t *self, void *key,
 		cc_map_item_t **result);
 
-int cc_list_map_print(cc_list_map_t *self, char *end_string);
+int cc_list_map_print(cc_list_map_t *self, void (*callback)(cc_map_item_t *), char *end_string);
 
 typedef struct cc_list_map_iter 
 {

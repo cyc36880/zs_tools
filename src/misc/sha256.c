@@ -1,4 +1,6 @@
 #include "sha256.h"
+#if (ZST_SHA256==1)
+
 #include <string.h>
 
 #define ROTRIGHT(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
@@ -138,3 +140,5 @@ void sha256_final(SHA256_CTX *ctx, uint8_t hash[32])
             hash[i + j * 4] = (ctx->state[j] >> (24 - i * 8)) & 0xFF;
     }
 }
+
+#endif

@@ -15,7 +15,6 @@ extern "C" {
 #include "./src/run_one/run_one.h"
 #include "./src/polling_tasks/polling_task.h"
 
-
 #ifdef __cplusplus
 }
 #endif

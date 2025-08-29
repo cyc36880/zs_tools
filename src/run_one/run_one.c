@@ -20,6 +20,7 @@ int run_one_init(run_one_t * run_one_d, void * data, size_t size)
     run_one_d->data = data;
     run_one_d->size = size;
     run_one_d->last_hash = fnv1a_64(data, size);
+    return 0;
 }
 
 /**
