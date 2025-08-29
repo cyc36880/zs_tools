@@ -4,6 +4,10 @@
 
 static uint64_t fnv1a_64(const void *data, size_t len)
 {
+    if (0 == len)
+    {
+        return (uintptr_t)data;
+    }
     const uint8_t *bytes = (const uint8_t *)data;
     uint64_t hash = 0xcbf29ce484222325; // FNV offset basis for 64-bit
 
@@ -19,7 +23,7 @@ int run_one_init(run_one_t * run_one_d, void * data, size_t size)
 {
     run_one_d->data = data;
     run_one_d->size = size;
-    run_one_d->last_hash = fnv1a_64(data, size);
+    run_one_d->hash = fnv1a_64(data, size);
     return 0;
 }
 
@@ -29,9 +33,9 @@ int run_one_init(run_one_t * run_one_d, void * data, size_t size)
 int run_one_data_changed(run_one_t * run_one_d)
 {
     uint64_t hash = fnv1a_64(run_one_d->data, run_one_d->size);
-    if (hash != run_one_d->last_hash)
+    if (hash != run_one_d->hash)
     {
-        run_one_d->last_hash = hash;
+        run_one_d->hash = hash;
         return 0;
     }
     return 1;
@@ -40,19 +44,18 @@ int run_one_data_changed(run_one_t * run_one_d)
 
 int run_one_data_equals(run_one_t * run_one_d, void * data, size_t size)
 {
-    uint64_t d_hash = fnv1a_64(run_one_d->data, run_one_d->size);
     uint64_t hash = fnv1a_64(data, size);
-    if (d_hash == hash)
+    if (run_one_d->hash == hash)
     {
-        if (0 == run_one_d->last_hash)
+        if (0 == run_one_d->equals_flag)
         {
-            run_one_d->last_hash = 1;
+            run_one_d->equals_flag = 1;
             return 0;
         }
     }
     else
     {
-        run_one_d->last_hash = 0;
+        run_one_d->equals_flag = 0;
     }
     return 1;
 }

@@ -9,8 +9,8 @@ typedef struct
 {
     void * data;
     size_t size;
-    uint64_t last_hash;
     uint64_t hash;
+    uint8_t equals_flag;
 } run_one_t;
 
 int run_one_init(run_one_t * run_one_d, void * data, size_t size);
