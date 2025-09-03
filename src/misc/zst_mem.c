@@ -1,5 +1,6 @@
 #include "zst_mem.h"
 
+#include "string.h"
 
 #if ZST_USE_ALLOC==1
     #if ZST_MEM_CUSTOM==1

@@ -1,5 +1,5 @@
-#ifndef __UDC_HAL_H__
-#define __UDC_HAL_H__
+#ifndef __ZST_HAL_H__
+#define __ZST_HAL_H__
 
 
 #ifdef __cplusplus
@@ -15,4 +15,4 @@ extern "C" {
 } /*extern "C"*/
 #endif
 
-#endif /* __UDC_HAL_H__ */
+#endif /* __ZST_HAL_H__ */
