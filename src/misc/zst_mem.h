@@ -27,6 +27,11 @@ void * zst_mem_calloc(size_t nmemb, size_t size);
 void zst_mem_free(void * ptr);
 void * zst_mem_realloc(void * ptr, size_t size);
 
+/**
+ * when `ZST_USE_ALLOC==0` or `ZST_MEM_CUSTOM==1`, will return 0
+ */
+size_t zst_mem_free_size(void);
+size_t zst_mem_used_size(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

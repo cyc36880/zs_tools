@@ -77,4 +77,31 @@ void * zst_mem_realloc(void * ptr, size_t size)
     #endif
 }
 
+size_t zst_mem_free_size(void)
+{
+    #if ZST_USE_ALLOC
+        #if ZST_MEM_CUSTOM==1
+            return 0;
+        #elif ZST_MEM_CUSTOM==0
+            return mm_get_free_memory();
+        #endif
+    #else
+        return 0;
+    #endif
+}
+
+size_t zst_mem_used_size(void)
+{
+    #if ZST_USE_ALLOC
+        #if ZST_MEM_CUSTOM==1
+            return 0;
+        #elif ZST_MEM_CUSTOM==0
+            return mm_get_used_memory();
+        #endif
+    #else
+        return 0;
+    #endif
+}
+
+
 
