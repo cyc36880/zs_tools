@@ -7,6 +7,7 @@ extern "C" {
 
 #include "cc_array.h"
 #include "cc_array_chain.h"
+#include "cc_array_stack.h"
 #include "cc_array_sort.h"
 #include "cc_binary.h"
 #include "cc_common.h"
