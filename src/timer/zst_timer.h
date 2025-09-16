@@ -20,15 +20,15 @@ struct _zst_timer_t
 {
     zst_timer_cb_t cb; /**< 定时器回调函数 */
     void *user_data;   /**< 用户数据 */
+    zst_timer_t *next; /**< 链表指针 */
 
     uint32_t period;   /**< 周期时间（单位：ms） */
     uint32_t last_run; /**< 上次触发时间（tick） */
 
     int32_t repeat_count; /**< 重复次数，-1为无限次，0为停止，大于0为剩余次数 */
-    bool paused;          /**< 是否暂停 */
-    bool ready;           /**< 是否立即触发 */
-
-    zst_timer_t *next; /**< 链表指针 */
+    uint8_t paused : 1;          /**< 是否暂停 */
+    uint8_t ready : 1;           /**< 是否立即触发 */
+    uint8_t to_be_deleted : 1;   /**< 是否需要删除 */
 };
 
 typedef struct 

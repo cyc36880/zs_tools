@@ -29,6 +29,7 @@ zst_timer_t *zst_timer_create_basic(ztimer_t *ztimer)
     timer->repeat_count = -1; // 默认无限次
     timer->paused = false;
     timer->ready = false;
+    timer->to_be_deleted = false;
     timer->last_run = zst_tick_get();
 
     // 插入链表头
@@ -55,8 +56,9 @@ void zst_timer_del(ztimer_t *ztimer, zst_timer_t *timer)
     {
         if (*curr == timer)
         {
-            *curr = timer->next;
-            zst_mem_free(timer);
+            // *curr = timer->next;
+            // zst_mem_free(timer);
+            timer->to_be_deleted = true;
             return;
         }
         curr = &((*curr)->next);
@@ -146,6 +148,7 @@ uint32_t zst_timer_handler(ztimer_t *ztimer)
     uint32_t min_wait = 0xFFFFFFFF;
     bool idle = true;
 
+    // ---------- 正常执行所有定时器回调 ----------
     for (zst_timer_t *t = ztimer->timer_list; t != NULL; t = t->next)
     {
         if (t->paused || !t->cb)
@@ -180,6 +183,32 @@ uint32_t zst_timer_handler(ztimer_t *ztimer)
         }
     }
 
+    // ---------- 安全删除标记为 to_be_deleted 的定时器 ----------
+    if (ztimer->timer_list)
+    {
+        zst_timer_t **prev = &(ztimer->timer_list);
+        zst_timer_t *t = ztimer->timer_list;
+
+        while (t)
+        {
+            if (t->to_be_deleted)
+            {
+                // 从链表中移除
+                *prev = t->next;
+                zst_timer_t *to_free = t;
+                t = t->next;
+
+                // 释放内存
+                zst_mem_free(to_free);
+            }
+            else
+            {
+                prev = &(t->next);
+                t = t->next;
+            }
+        }
+    }
+    // ---------- 计算空闲时间 ----------
     if (idle)
     {
         uint32_t idle_start = zst_tick_get();

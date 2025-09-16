@@ -20,7 +20,8 @@ extern "C"
 
     typedef enum
     {
-        E_CLOGE = 1,
+        E_CLOGU = 1, // user 
+        E_CLOGE,
         E_CLOGW,
         E_CLOGI,
         E_CLOGD,
@@ -29,6 +30,7 @@ extern "C"
 
     typedef enum
     {
+        CLOG_USER,
         CLOG_NONE,   /*!< No log output */
         CLOG_ERROR,  /*!< Critical errors, software module can not recover on its own */
         CLOG_WARN,   /*!< Error conditions from which recovery measures have been taken */
@@ -114,19 +116,22 @@ extern "C"
             case E_CLOGE:                                                                           \
                 CLOGE(tag, "%s %s (%d): " format, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
                 break;                                                                              \
+            case E_CLOGU:                                                                           \
+                CLOGD(tag, format, ##__VA_ARGS__);                                                   \
+                break;                                                                              \
             default:                                                                                \
                 CLOGI(tag, "%s %s (%d): " format, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
                 break;                                                                              \
             }                                                                                       \
         }                                                                                           \
-    } while (0);
-#define ASSERT(expr) assert(expr)
+    } while (0)
 
+#define ZST_LOG(format, ...)       CLOG(E_CLOGU, "", format, ##__VA_ARGS__)
+#define ZST_LOGE(tag, format, ...) CLOG(CLOG_ERROR, tag, format, ##__VA_ARGS__)
+#define ZST_LOGW(tag, format, ...) CLOG(CLOG_WARN, tag, format, ##__VA_ARGS__)
 #define ZST_LOGI(tag, format, ...) CLOG(CLOG_INFO, tag, format, ##__VA_ARGS__)
 #define ZST_LOGD(tag, format, ...) CLOG(CLOG_DEBUG, tag, format, ##__VA_ARGS__)
 #define ZST_LOGV(tag, format, ...) CLOG(CLOG_VERBOSE, tag, format, ##__VA_ARGS__)
-#define ZST_LOGW(tag, format, ...) CLOG(CLOG_WARN, tag, format, ##__VA_ARGS__)
-#define ZST_LOGE(tag, format, ...) CLOG(CLOG_ERROR, tag, format, ##__VA_ARGS__)
 
 #endif
 
