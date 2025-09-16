@@ -44,8 +44,8 @@ extern "C" {
 
 
 #if ZST_USE_LOG
-    // 0 - 5
-    #define ZST_LOG_LEVEL  5
+    // 0 - 6
+    #define ZST_LOG_LEVEL  6
 #endif
 
 /**
