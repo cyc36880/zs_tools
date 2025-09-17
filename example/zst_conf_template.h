@@ -33,7 +33,7 @@ extern "C" {
         // for how many k bytes
         #define ZST_MEM_SIZE (5)
         #if (ZST_MEM_LOG && ZST_USE_LOG)
-            #define tlsf_assert(expr) ZST_LOGE("tlsf", "%s", #expr);
+            #define tlsf_assert(expr) do {if(!(expr)) ZST_LOGE("tlsf", "%s", #expr);}while(0)
         #else
             #define tlsf_assert(expr)
         #endif
