@@ -132,7 +132,7 @@ uint32_t clog_timestamp(void);
         }                                                                                           \
     } while (0)
 
-#define ZST_LOG(format, ...)       CLOG(CLOG_USER, "", format, ##__VA_ARGS__)
+#define ZST_LOG(format, ...)       CLOG(CLOG_USER, "*", format, ##__VA_ARGS__)
 #define ZST_LOGE(tag, format, ...) CLOG(CLOG_ERROR, tag, format, ##__VA_ARGS__)
 #define ZST_LOGW(tag, format, ...) CLOG(CLOG_WARN, tag, format, ##__VA_ARGS__)
 #define ZST_LOGI(tag, format, ...) CLOG(CLOG_INFO, tag, format, ##__VA_ARGS__)
