@@ -18,30 +18,30 @@ extern "C"
 #include <stdlib.h>
 #include <assert.h>
 
-    typedef enum
-    {
-        E_CLOGU = 1, // user 
-        E_CLOGE,
-        E_CLOGW,
-        E_CLOGI,
-        E_CLOGD,
-        E_CLOGV,
-    } LOG_LEVEL_E;
+typedef enum
+{
+    E_CLOGU = 1, // user 
+    E_CLOGE,
+    E_CLOGW,
+    E_CLOGI,
+    E_CLOGD,
+    E_CLOGV,
+} LOG_LEVEL_E;
 
-    typedef enum
-    {
-        CLOG_USER,
-        CLOG_NONE,   /*!< No log output */
-        CLOG_ERROR,  /*!< Critical errors, software module can not recover on its own */
-        CLOG_WARN,   /*!< Error conditions from which recovery measures have been taken */
-        CLOG_INFO,   /*!< Information messages which describe normal flow of events */
-        CLOG_DEBUG,  /*!< Extra information which is not necessary for normal use (values, pointers, sizes, etc). */
-        CLOG_VERBOSE /*!< Bigger chunks of debugging information, or frequent messages which can potentially flood the output. */
-    } log_level_t;
+typedef enum
+{
+    CLOG_NONE,   /*!< No log output */
+    CLOG_USER,
+    CLOG_ERROR,  /*!< Critical errors, software module can not recover on its own */
+    CLOG_WARN,   /*!< Error conditions from which recovery measures have been taken */
+    CLOG_INFO,   /*!< Information messages which describe normal flow of events */
+    CLOG_DEBUG,  /*!< Extra information which is not necessary for normal use (values, pointers, sizes, etc). */
+    CLOG_VERBOSE /*!< Bigger chunks of debugging information, or frequent messages which can potentially flood the output. */
+} log_level_t;
 
-    void clog_write(log_level_t level, const char *tag, const char *format, ...) __attribute__((format(printf, 3, 4)));
+void clog_write(log_level_t level, const char *tag, const char *format, ...) __attribute__((format(printf, 3, 4)));
 
-    uint32_t clog_timestamp(void);
+uint32_t clog_timestamp(void);
 
 #define CLOG_COLOR_BLACK "30"
 #define CLOG_COLOR_RED "31"
@@ -58,32 +58,37 @@ extern "C"
 #define CLOG_COLOR_I CLOG_COLOR(CLOG_COLOR_GREEN)
 #define CLOG_COLOR_D
 #define CLOG_COLOR_V
+#define CLOG_COLOR_U
 
-#define CLOG_FORMAT(letter, format) CLOG_COLOR_##letter #letter " (%d) %s: " format CLOG_RESET_COLOR "\n"
+#define CLOG_FORMAT(letter, format) CLOG_COLOR_##letter #letter " (%d) [%s]: " format CLOG_RESET_COLOR "\n"
 
-#define CLOG_LEVEL(level, tag, format, ...)                                                             \
-    do                                                                                                  \
-    {                                                                                                   \
-        if (level == CLOG_ERROR)                                                                        \
-        {                                                                                               \
+#define CLOG_LEVEL(level, tag, format, ...)                                                              \
+    do                                                                                                   \
+    {                                                                                                    \
+        if (level == CLOG_ERROR)                                                                         \
+        {                                                                                                \
             clog_write(CLOG_ERROR, tag, CLOG_FORMAT(E, format), clog_timestamp(), tag, ##__VA_ARGS__);   \
-        }                                                                                               \
-        else if (level == CLOG_WARN)                                                                    \
-        {                                                                                               \
+        }                                                                                                \
+        else if (level == CLOG_WARN)                                                                     \
+        {                                                                                                \
             clog_write(CLOG_WARN, tag, CLOG_FORMAT(W, format), clog_timestamp(), tag, ##__VA_ARGS__);    \
-        }                                                                                               \
-        else if (level == CLOG_DEBUG)                                                                   \
-        {                                                                                               \
+        }                                                                                                \
+        else if (level == CLOG_DEBUG)                                                                    \
+        {                                                                                                \
             clog_write(CLOG_DEBUG, tag, CLOG_FORMAT(D, format), clog_timestamp(), tag, ##__VA_ARGS__);   \
-        }                                                                                               \
-        else if (level == CLOG_VERBOSE)                                                                 \
-        {                                                                                               \
+        }                                                                                                \
+        else if (level == CLOG_VERBOSE)                                                                  \
+        {                                                                                                \
             clog_write(CLOG_VERBOSE, tag, CLOG_FORMAT(V, format), clog_timestamp(), tag, ##__VA_ARGS__); \
-        }                                                                                               \
-        else                                                                                            \
-        {                                                                                               \
+        }                                                                                                \
+        else if (level == CLOG_INFO)                                                                     \
+        {                                                                                                \
             clog_write(CLOG_INFO, tag, CLOG_FORMAT(I, format), clog_timestamp(), tag, ##__VA_ARGS__);    \
-        }                                                                                               \
+        }                                                                                                \
+        else if (level == CLOG_USER)                                                                     \
+        {                                                                                                \
+            clog_write(CLOG_USER, tag, CLOG_FORMAT(U, format), clog_timestamp(), tag, ##__VA_ARGS__);    \
+        }                                                                                                \
     } while (0)
 
 #define CLOGE(tag, format, ...) CLOG_LEVEL(CLOG_ERROR, tag, format, ##__VA_ARGS__)
@@ -91,6 +96,7 @@ extern "C"
 #define CLOGI(tag, format, ...) CLOG_LEVEL(CLOG_INFO, tag, format, ##__VA_ARGS__)
 #define CLOGD(tag, format, ...) CLOG_LEVEL(CLOG_DEBUG, tag, format, ##__VA_ARGS__)
 #define CLOGV(tag, format, ...) CLOG_LEVEL(CLOG_VERBOSE, tag, format, ##__VA_ARGS__)
+#define CLOGU(tag, format, ...) CLOG_LEVEL(CLOG_USER, tag, format, ##__VA_ARGS__)
 
 #define DEF_CLOG_DEFAULT_LEVEL ZST_LOG_LEVEL
 
@@ -117,7 +123,7 @@ extern "C"
                 CLOGE(tag, "%s %s (%d): " format, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
                 break;                                                                              \
             case E_CLOGU:                                                                           \
-                CLOGD(tag, format, ##__VA_ARGS__);                                                   \
+                CLOGU(tag, format, ##__VA_ARGS__);                                                  \
                 break;                                                                              \
             default:                                                                                \
                 CLOGI(tag, "%s %s (%d): " format, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
@@ -126,7 +132,7 @@ extern "C"
         }                                                                                           \
     } while (0)
 
-#define ZST_LOG(format, ...)       CLOG(E_CLOGU, "", format, ##__VA_ARGS__)
+#define ZST_LOG(format, ...)       CLOG(CLOG_USER, "", format, ##__VA_ARGS__)
 #define ZST_LOGE(tag, format, ...) CLOG(CLOG_ERROR, tag, format, ##__VA_ARGS__)
 #define ZST_LOGW(tag, format, ...) CLOG(CLOG_WARN, tag, format, ##__VA_ARGS__)
 #define ZST_LOGI(tag, format, ...) CLOG(CLOG_INFO, tag, format, ##__VA_ARGS__)
