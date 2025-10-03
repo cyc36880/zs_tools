@@ -48,7 +48,7 @@ size_t cc_str_hash_fn_simple(void *obj);
 /* Calculate hash from string in the BKDR (31, 131, 1313, ...) way. */
 size_t cc_str_hash_fn_bkdr(void *obj);
 
-/* Call `free` and return 0. */
+/* Call `cc_free` and return 0. */
 int cc_default_delete_fn(void *obj);
 
 void cc_exit_info(int code, const char *format, ...);

@@ -162,14 +162,14 @@ int cc_list_cursor_new(cc_list_cursor_t **self, cc_list_t *list,
 	*self = tmp;
 	return 0;
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
 
 int cc_list_cursor_delete(cc_list_cursor_t *self)
 {
-	free(self);
+	cc_free(self);
 	return 0;
 }
 
@@ -265,7 +265,7 @@ int cc_list_node_remove_before(cc_list_node_t *self, void **result)
 	self->prev->prev->next = self;
 	self->prev = self->prev->prev;
 
-	free(node);
+	cc_free(node);
 	return 0;
 }
 
@@ -282,7 +282,7 @@ int cc_list_node_remove_after(cc_list_node_t *self, void **result)
 	self->next->next->prev = self;
 	self->next = self->next->next;
 
-	free(node);
+	cc_free(node);
 	return 0;
 }
 
@@ -297,7 +297,7 @@ int cc_list_node_delete_and_next(cc_list_node_t **pcurrent,
 			return 1;
 	}
 
-	free(current);
+	cc_free(current);
 
 	*pcurrent = next;
 	return 0;
@@ -447,7 +447,7 @@ int cc_list_delete(cc_list_t *self)
 			return 1;
 	}
 
-	free(self);
+	cc_free(self);
 	return 0;
 }
 

@@ -136,23 +136,23 @@ int cc_array_new(cc_array_t **self, size_t elem_nums, size_t elem_size)
 	return 0;
 
 fail3:
-	free(data);
+	cc_free(data);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
 
 int cc_array_delete_keep_data(cc_array_t *self)
 {
-	free(self);
+	cc_free(self);
 	return 0;
 }
 
 int cc_array_delete(cc_array_t *self)
 {
-	free(self->data);
-	free(self);
+	cc_free(self->data);
+	cc_free(self);
 	return 0;
 }
 

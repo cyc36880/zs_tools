@@ -73,7 +73,7 @@ int cc_array_stack_new(cc_array_stack_t **self, size_t elem_nums,
 fail3:
 	cc_array_delete(data);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
@@ -83,6 +83,6 @@ int cc_array_stack_delete(cc_array_stack_t *self)
 	if (cc_array_delete(self->data))
 		return 1;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }

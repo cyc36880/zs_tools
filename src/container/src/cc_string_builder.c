@@ -68,7 +68,7 @@ int cc_string_builder_new(cc_string_builder_t **self)
 //fail3:
 //	cc_array_chain_delete(tmp->chain);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
@@ -78,7 +78,7 @@ int cc_string_builder_delete(cc_string_builder_t *self)
 	if (cc_array_chain_delete(self->chain))
 		return 1;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }
 

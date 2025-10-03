@@ -40,7 +40,7 @@ size_t cc_str_hash_fn_bkdr(void *obj)
 
 int cc_default_delete_fn(void *obj)
 {
-	free(obj);
+	cc_free(obj);
 	return 0;
 }
 

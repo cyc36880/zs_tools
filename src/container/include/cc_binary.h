@@ -39,7 +39,7 @@ typedef struct cc_binary_iter
 
 /*
  * This iterator do not provide `_init` method since it need a `_delete` to
- * free some resources.
+ * cc_free some resources.
  */
 int cc_binary_iter_new(cc_binary_iter_t **self, cc_binary_t *root,
 		enum cc_traverse_direction direction);

@@ -97,7 +97,7 @@ int cc_array_chain_new(cc_array_chain_t **self, int node_elem_nums,
 //fail3:
 //	cc_list_delete(tmp->node_chain);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
@@ -118,7 +118,7 @@ int cc_array_chain_delete(cc_array_chain_t *self)
 	if (cc_list_delete(self->node_chain))
 		return 3;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }
 

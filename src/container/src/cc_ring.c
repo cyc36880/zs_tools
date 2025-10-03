@@ -94,7 +94,7 @@ int cc_ring_new(cc_ring_t **self, size_t elem_nums, size_t elem_size)
 fail3:
 	cc_array_delete(data);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
@@ -104,6 +104,6 @@ int cc_ring_delete(cc_ring_t *self)
 	if (cc_array_delete(self->data))
 		return 1;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }

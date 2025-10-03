@@ -104,7 +104,7 @@ int cc_binary_delete(cc_binary_t *self)
 	if (cc_binary_delete(self->right))
 		return 2;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }
 
@@ -224,7 +224,7 @@ int cc_binary_iter_new(cc_binary_iter_t **self, cc_binary_t *root,
 fail3:
 	cc_list_delete(tmp->queue);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
@@ -235,6 +235,6 @@ int cc_binary_iter_delete(cc_binary_iter_t *self)
 	if (cc_list_delete(self->queue))
 		tmp = 1;
 
-	free(self);
+	cc_free(self);
 	return tmp;
 }

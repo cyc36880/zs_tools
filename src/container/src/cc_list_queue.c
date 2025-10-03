@@ -43,7 +43,7 @@ int cc_list_queue_new(cc_list_queue_t **self)
 //fail3:
 //	cc_list_delete(tmp->list);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
@@ -53,6 +53,6 @@ int cc_list_queue_delete(cc_list_queue_t *self)
 	if (cc_list_delete(self->list))
 		return 1;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }

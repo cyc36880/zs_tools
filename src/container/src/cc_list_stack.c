@@ -44,7 +44,7 @@ int cc_list_stack_new(cc_list_stack_t **self)
 //fail3:
 //	cc_list_delete(tmp->list);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
@@ -54,6 +54,6 @@ int cc_list_stack_delete(cc_list_stack_t *self)
 	if (cc_list_delete(self->list))
 		return 1;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }

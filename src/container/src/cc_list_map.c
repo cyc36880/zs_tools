@@ -68,7 +68,7 @@ int cc_list_map_insert_new(cc_list_map_t *self, void *key, void *value)
 	return 0;
 
 fail2:
-	free(item);
+	cc_free(item);
 fail1:
 	return 1;
 }
@@ -170,7 +170,7 @@ fail3:
 	cc_list_delete(tmp->data);
 fail2:
 	printf("fail2\n");
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	printf("fail1\n");
 	return 1;
@@ -184,12 +184,12 @@ int cc_list_map_delete(cc_list_map_t *self)
 	if (cc_list_iter_init(&iter, self->data, 0))
 		return 1;
 	while (!cc_iter_next(&iter, &item, NULL))
-		free(*item);
+		cc_free(*item);
 
 	if (cc_list_delete(self->data))
 		return 2;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }
 

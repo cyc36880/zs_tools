@@ -141,7 +141,7 @@ int cc_hash_map_new(cc_hash_map_t **self, size_t bucket_size,
 fail3:
 	cc_array_delete(tmp->data);
 fail2:
-	free(tmp);
+	cc_free(tmp);
 fail1:
 	return 1;
 }
@@ -163,7 +163,7 @@ int cc_hash_map_delete(cc_hash_map_t *self)
 	if (cc_array_delete(self->data))
 		return 3;
 
-	free(self);
+	cc_free(self);
 	return 0;
 }
 
