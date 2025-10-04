@@ -31,7 +31,7 @@ extern "C" {
         #define ZST_MEM_CUSTOM_REALLOC(x,y) realloc(x,y)
     #else
         // for how many k bytes
-        #define ZST_MEM_SIZE (5)
+        #define ZST_MEM_SIZE (7)
         #if (ZST_MEM_LOG && ZST_USE_LOG)
             #define tlsf_assert(expr) do {if(!(expr)) ZST_LOGE("tlsf", "%s", #expr);}while(0)
         #else
