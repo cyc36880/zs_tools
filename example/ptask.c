@@ -1,71 +1,82 @@
-#include <Arduino.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include "esp_task_wdt.h"
+#include <stdio.h>
+#include "zs_tools/zs_tool.h"
+#include "unistd.h"
 
-#include "zst_core.h"
 
-static ptask_list_t task_list;
-static ptask_t  * ptask1;
-static ptask_t  * ptask2;
+ptask_list_t ptask_list ={0};
 
-static ptask_t * ptask1_1;
+ptask_root_t * root0;
+ptask_root_t * root1;
 
-void ptask_load(ptask_t * ptask)
+ptask_t * task0;
+ptask_t * task1;
+
+ptask_t * task2;
+ptask_t * task3;
+
+void event_callback(ptask_t *task, ptask_event_t *e)
 {
-    Serial.printf("ptask load %d\n", (uint32_t)ptask->user_data);
-}
-
-void ptask_func(ptask_t * ptask)
-{
-    const ptask_t * ptask_array[] = {ptask1, ptask2};
-    static uint8_t count = 0;
-    static uint8_t task_id = 0;
-    Serial.printf("Hello World! %d\n", (uint32_t)ptask->user_data);
-    if (++count == 10)
+    static uint8_t i = 0;
+    if (++i > 10)
     {
-        if (++task_id > 1)
-            task_id = 0;
-        count=0;
-        ptask_start(&task_list, ptask_array[task_id]);
+        i = 0;
+        ptask_root_select(&ptask_list, root1);
+        return;
+    }
+
+    if (task == task0)
+    {
+        printf("rt0 task0 hello word : %d\n", ptask_get_code(e));
+    }
+    else if (task == task1)
+    {
+        printf("rt0 task1 hello word : %d\n", ptask_get_code(e));
     }
 }
 
-void ptask_func_exit(ptask_t * ptask)
+void event2_callback(ptask_t *task, ptask_event_t *e)
 {
-    Serial.printf("ptask_func_exit! %d\n", (uint32_t)ptask->user_data);
+    static uint8_t i = 0;
+    if (++i > 10)
+    {
+        i = 0;
+        ptask_root_select(&ptask_list, root0);
+        ptask_pause(task2);
+        printf("stop task2..\n");
+        return;
+    }
+
+    if (task == task2)
+    {
+        printf("rt1 task2 hello word : %d\n", ptask_get_code(e));
+    }
+    else if (task == task3)
+    {
+        printf("rt1 task3 hello word : %d\n", ptask_get_code(e));
+    }
 }
 
-
-void setup()
+int main()
 {
-    Serial.begin(115200);
-    zst_init();
-    ptask_init(&task_list);
+    ptask_init(&ptask_list);
+    root0 = ptask_root_create(&ptask_list);
+    root1 = ptask_root_create(&ptask_list);
+    
+    task0 = ptask_create(root0, event_callback, NULL);
+    task1 = ptask_create(root0, event_callback, NULL);
 
-    ptask_base_t ptask_base = {
-        .load = ptask_load,
-        .run = ptask_func,
-    };
-    // 创建任务根 1
-    ptask1 = ptask_root_create(&task_list, &ptask_base);
-    ptask1->user_data = (uint32_t *) 1;
+    task2 = ptask_create(root1, event2_callback, NULL);
+    task3 = ptask_create(root1, event2_callback, NULL);
 
-    // 创建任务根 2
-    ptask2 = ptask_root_create(&task_list, &ptask_base);
-    ptask2->user_data = (uint32_t *) 2;
+    ptask_root_select(&ptask_list, root0);
 
-    // 创建任务 1.1
-    ptask_base.exit = ptask_func_exit;
-    ptask1_1 = ptask_create(ptask1, &ptask_base);
-    ptask1_1->user_data = (uint32_t *) 3;
+    // ptask_list_send_event(&ptask_list, PTASK_EVENT_EXIT, NULL);
+    // ptask_root_send_event(root, PTASK_EVENT_EXIT, NULL);
 
-    // ptask_start(&task_list, ptask1); // 默认自动开启任务
+    while (1)
+    {
+        ptask_run(&ptask_list);
+        usleep(1000 * 500);
+    }
+    return 0;
 }
-
-void loop()
-{
-    ptask_run(&task_list);
-    delay(1000);
-}
-
