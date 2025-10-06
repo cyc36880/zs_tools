@@ -6,7 +6,7 @@ extern "C"
 {
 #endif
 
-#include "../../../zst_conf.h"
+#include "zst_conf.h"
 #if (ZST_SHA256==1)
 typedef struct
 {

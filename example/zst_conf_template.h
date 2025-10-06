@@ -19,7 +19,7 @@ extern "C" {
 #define ZST_USE_REGISTER 0
 #define ZST_USE_PID      0
 #define ZST_SHA256       0
-
+#define ZST_DEVICES      0
 
 #if ZST_USE_ALLOC
     #define ZST_MEM_LOG    1
@@ -30,7 +30,7 @@ extern "C" {
         #define ZST_MEM_CUSTOM_FREE(x)      free(x)
         #define ZST_MEM_CUSTOM_REALLOC(x,y) realloc(x,y)
     #else
-        // for how many k bytes
+        // For how many k bytes; Please ensure it is greater than 7
         #define ZST_MEM_SIZE (7)
         #if (ZST_MEM_LOG && ZST_USE_LOG)
             #define tlsf_assert(expr) do {if(!(expr)) ZST_LOGE("tlsf", "%s", #expr);}while(0)
@@ -52,6 +52,10 @@ extern "C" {
 #if ZST_USE_LOG
     // 0 - 6
     #define ZST_LOG_LEVEL  0
+#endif
+
+#if ZST_DEVICES
+    #define ZST_DEVICE_IRMOTE 1
 #endif
 
 /**
