@@ -42,7 +42,7 @@ typedef enum
 
 struct _ptask_event_
 {
-    uint16_t code;
+    ptask_event_code_t code;
     void *param;
 };
 

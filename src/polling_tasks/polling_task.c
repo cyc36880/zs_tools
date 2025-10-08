@@ -71,6 +71,7 @@ int ptask_root_select(ptask_list_t * ptask_list, ptask_root_t * root)
     }
     ptask_list->current_root = root;
     // TODO : INIT 事件由 `run` 内部执行
+    return 0;
 }
 
 int ptask_root_pause(ptask_root_t * root)
@@ -184,11 +185,13 @@ int ptask_run(ptask_list_t * ptask_list)
 int ptask_pause(ptask_t * task)
 {
     task->paused = 1;
+    return 0;
 }
 
 int ptask_resume(ptask_t * task)
 {
     task->paused = 0;
+    return 0;
 }
 
 
@@ -211,7 +214,7 @@ static void event_callback(ptask_t *task, ptask_event_t *e)
 {
     switch (ptask_get_code(e))
     {
-        case PTASK_EVENT_SYS : 
+        case PTASK_EVENT_SYS : {
             uintptr_t param = (uintptr_t)ptask_get_param(e);
             if (1 == param)
             {
@@ -221,7 +224,8 @@ static void event_callback(ptask_t *task, ptask_event_t *e)
             {
                 task->paused = 0;
             }
-            break;
+        }break;
+        
         case PTASK_EVENT_EXIT : 
             task->is_init = 0;
             break;
