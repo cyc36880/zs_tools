@@ -30,10 +30,7 @@ extern "C"
 typedef enum
 {
     ZST_EVENT_ALL = 0,
-
-    ZST_EVENT_PUBLIC,
-
-    _ZST_EVENT_LAST, /** Number of default events*/
+    ZST_EVENT_LAST,
 } zst_event_code_t;
 
 typedef struct _zst_event_t
@@ -109,7 +106,7 @@ void *zst_event_get_user_data(zst_event_t *e);
  * @param target_obj pointer to an target_obj
  * @param filter     and event code
  * @param event_cb   the new event function
- * @param            user_data custom data data will be available in `event_cb`
+ * @param user_data custom data data will be available in `event_cb`
  * @return           a pointer the event descriptor.
  */
 zst_event_dsc_t *zst_target_add_event_cb_static(void *target_obj, zst_event_dsc_t *event_dsc, zst_event_cb_t event_cb,

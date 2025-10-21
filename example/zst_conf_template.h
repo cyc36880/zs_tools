@@ -11,7 +11,7 @@ extern "C" {
 
 #define ZST_USE_ALLOC    0
 #define ZST_TICK_CUSTOM  0
-#define ZST_USE_LOG      0
+#define ZST_USE_LOG      1
 #define ZST_USE_TIMER    0
 #define ZST_USE_EVENT    0
 #define ZST_RUN_ONE      0
@@ -56,15 +56,6 @@ extern "C" {
 
 #if ZST_DEVICES
     #define ZST_DEVICE_IRMOTE 1
-#endif
-
-/**
- * public events
- */
-#if (ZST_USE_EVENT == 1)
-
-    #define ZST_EVENT_PUBLIC ZST_EVENTR_0,\
-                             ZST_EVENTR_1
 #endif
 
 #if (ZST_USE_REGISTER == 1)

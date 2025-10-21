@@ -14,6 +14,7 @@ extern "C" {
 #include "./src/event/zst_event.h"
 #include "./src/run_one/run_one.h"
 #include "./src/polling_tasks/polling_task.h"
+#include "./src/register/register.h"
 
 #ifdef __cplusplus
 }
