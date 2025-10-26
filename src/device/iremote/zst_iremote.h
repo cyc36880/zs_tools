@@ -1,5 +1,5 @@
-#ifndef __IRMOTE_H__
-#define __IRMOTE_H__
+#ifndef __ZST_IRMOTE_H__
+#define __ZST_IRMOTE_H__
 
 
 #ifdef __cplusplus

@@ -1,4 +1,4 @@
-#include "iremote.h"
+#include "zst_iremote.h"
 #if ZST_DEVICE_IRMOTE==1
 
 /**
