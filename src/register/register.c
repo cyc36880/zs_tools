@@ -167,6 +167,22 @@ int reg_data_element_diff_camp(reg_data_element_t * reg_data_element)
 }
 
 /**
+ * @description: 得到 `element` 的地址
+ * @param {reg_data_element_t *} reg_data_element
+ * @param {uint16_t *} addr
+ * @return {*}
+ */
+int reg_data_element_get_addr(reg_data_element_t * reg_data_element, uint16_t * addr)
+{
+    if (NULL == reg_data_element || NULL == addr) return -1;
+    reg_data_pack_t * reg_data_pack = reg_data_element->owner;
+    // 第几个 element
+    size_t element_index = ((uintptr_t)reg_data_element - (uintptr_t)reg_data_pack->element_array.data) / sizeof(reg_data_element_t);
+    *addr = element_index;
+    return 0;
+}
+
+/**
  * @description: 消除 `element` 与 原始数据的差异
  *  @note 这是将 `element` 的数据拷贝到 `comparison_buffer` 中
  * @param {reg_data_element_t *} reg_data_element

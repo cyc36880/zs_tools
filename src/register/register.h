@@ -91,6 +91,7 @@ int reg_data_element_set_receive_finsh_flag(reg_data_element_t * reg_data_elemen
 int reg_data_element_get_receive_finsh_flag(const reg_data_element_t * reg_data_element, uint8_t * flag);
 int reg_data_element_diff_camp(reg_data_element_t * reg_data_element);
 int reg_data_elemet_diff_eliminate(reg_data_element_t * reg_data_element);
+int reg_data_element_get_addr(reg_data_element_t * reg_data_element, uint16_t * addr);
 
 int reg_data_core_run(reg_data_t * reg_data);
 
