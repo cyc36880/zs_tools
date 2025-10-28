@@ -44,34 +44,37 @@ typedef struct
     uint8_t camp_diff_flag     : 1; // 比较差异标志
 } reg_data_flag_t;
 
-typedef struct 
+typedef struct _reg_data_element_
 {
-    _zst_obj_spec_attr_t   spec_attr;
-    struct _reg_data_pack_ * owner;      // 所属的reg_data_pack
-    void                   * user_data;
-    uint8_t                * data;
-    uint16_t               data_size;
-    uint8_t                subscribe  : 1; // 订阅; 订阅后，查找是否与内存数据不同
-    reg_data_flag_t        flag;
+    _zst_obj_spec_attr_t      spec_attr;
+    struct _reg_data_pack_    * owner;      // 所属的reg_data_pack
+    void                      * user_data;
+    uint8_t                   * data;
+    struct _reg_data_element_ * ent_rev_next;
+    uint16_t                  data_size;
+    uint8_t                   subscribe  : 1; // 订阅; 订阅后，查找是否与内存数据不同
+    volatile reg_data_flag_t  flag;
 } reg_data_element_t;
 
 typedef struct _reg_data_pack_
 {
-    _zst_obj_spec_attr_t spec_attr;
-    struct _reg_data_    * owner;               // 所属的reg_data
-    void                 * user_data;
-    uint8_t              * comparison_buffer;   // 用于比较
-    cc_array_t           element_array;
-    uint8_t              event_flag_bubble  : 1; // 事件冒泡
-    reg_data_flag_t      flag;
+    _zst_obj_spec_attr_t      spec_attr;
+    struct _reg_data_         * owner;               // 所属的reg_data
+    void                      * user_data;
+    uint8_t                   * comparison_buffer;   // 用于比较
+    struct _reg_data_pack_    * ent_rev_next;
+    reg_data_element_t        * ent_rev_elements; 
+    cc_array_t                element_array;
+    volatile reg_data_flag_t  flag;
 } reg_data_pack_t;
 
 typedef struct _reg_data_
 {
-    _zst_obj_spec_attr_t   spec_attr;
-    cc_hash_map_t          * data_pack;
-    const DATA_PACK_TYPE_T data_pack_type;
-    reg_data_flag_t        flag;
+    _zst_obj_spec_attr_t      spec_attr;
+    cc_hash_map_t             * data_pack;
+    reg_data_pack_t           * ent_rev_packs;
+    const DATA_PACK_TYPE_T    data_pack_type;
+    volatile reg_data_flag_t  flag;
 } reg_data_t;
 
 typedef struct 
@@ -91,7 +94,7 @@ int reg_data_element_set_receive_finsh_flag(reg_data_element_t * reg_data_elemen
 int reg_data_element_get_receive_finsh_flag(const reg_data_element_t * reg_data_element, uint8_t * flag);
 int reg_data_element_diff_camp(reg_data_element_t * reg_data_element);
 int reg_data_elemet_diff_eliminate(reg_data_element_t * reg_data_element);
-int reg_data_element_get_addr(reg_data_element_t * reg_data_element, uint16_t * addr);
+int reg_data_element_get_addr(reg_data_element_t * reg_data_element);
 
 int reg_data_core_run(reg_data_t * reg_data);
 

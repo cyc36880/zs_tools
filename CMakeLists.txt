@@ -19,7 +19,7 @@ set(CONTAINER_SRC
 )
 
 set(DEVICE_SRC
-    src/device/iremote/iremote.c
+    src/device/iremote/zst_iremote.c
 )
 
 set(EVENT_SRC

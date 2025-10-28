@@ -169,17 +169,15 @@ int reg_data_element_diff_camp(reg_data_element_t * reg_data_element)
 /**
  * @description: 得到 `element` 的地址
  * @param {reg_data_element_t *} reg_data_element
- * @param {uint16_t *} addr
- * @return {*}
+ * @return {*} addr: >= 0; -1:错误
  */
-int reg_data_element_get_addr(reg_data_element_t * reg_data_element, uint16_t * addr)
+int reg_data_element_get_addr(reg_data_element_t * reg_data_element)
 {
-    if (NULL == reg_data_element || NULL == addr) return -1;
+    if (NULL == reg_data_element) return -1;
     reg_data_pack_t * reg_data_pack = reg_data_element->owner;
     // 第几个 element
     size_t element_index = ((uintptr_t)reg_data_element - (uintptr_t)reg_data_pack->element_array.data) / sizeof(reg_data_element_t);
-    *addr = element_index;
-    return 0;
+    return element_index;
 }
 
 /**
@@ -388,8 +386,6 @@ static void reg_data_element_aftermath(reg_data_element_t * element)
 {
     reg_data_element_receive_finish_aftermath_core(element);
     subscribe_element_aftermath_core(element);
-    element->flag.camp_diff_flag = 0;
-    element->flag.receive_finsh_flag = 0;
 }
 
 static void reg_data_pack_check(reg_data_pack_t * data_pack)
@@ -402,8 +398,6 @@ static void reg_data_pack_aftermath(reg_data_pack_t * data_pack)
 {
     reg_data_pack_receive_finish_aftermath_core(data_pack);
     subscribe_pack_aftermath_core(data_pack);
-    data_pack->flag.camp_diff_flag = 0;
-    data_pack->flag.receive_finsh_flag = 0;
 }
 
 
@@ -411,8 +405,6 @@ static void reg_data_aftermath(reg_data_t * reg_data)
 {
     reg_data_receive_finish_aftermath_core(reg_data);
     subscribe_reg_data_aftermath_core(reg_data);
-    reg_data->flag.camp_diff_flag = 0;
-    reg_data->flag.receive_finsh_flag = 0;
 }
 
 // ======================== reg data 接收完成事件 =====================================
@@ -420,8 +412,21 @@ static void reg_data_element_receive_finish_check_core(reg_data_element_t * elem
 {
     if (element->flag.receive_finsh_flag)
     {
+        element->flag.receive_finsh_flag = 0;
         element->owner->flag.receive_finsh_flag = 1;
         zst_event_send_exe_now(element, DATA_PACK_ENENT_RECEIVE_FINSH, NULL);
+
+        // 写入到 ower 的 receive 的 事件列表中
+        element->ent_rev_next = NULL;
+        if (NULL == element->owner->ent_rev_elements)
+        {
+            element->owner->ent_rev_elements = element;
+        }
+        else
+        {
+            element->ent_rev_next = element->owner->ent_rev_elements;
+            element->owner->ent_rev_elements = element;
+        }
     }
 }
 
@@ -433,8 +438,21 @@ static void reg_data_pack_receive_finish_check_core(reg_data_pack_t * data_pack)
 {
     if (data_pack->flag.receive_finsh_flag)
     {
+        data_pack->flag.receive_finsh_flag = 0;
         data_pack->owner->flag.receive_finsh_flag = 1;
         zst_event_send_exe_now(data_pack, DATA_PACK_ENENT_RECEIVE_FINSH, NULL);
+
+        // 写入到 ower 的 receive 的 事件列表中
+        data_pack->ent_rev_next = NULL;
+        if (NULL == data_pack->owner->ent_rev_packs)
+        {
+            data_pack->owner->ent_rev_packs = data_pack;
+        }
+        else
+        {
+            data_pack->ent_rev_next = data_pack->owner->ent_rev_packs;
+            data_pack->owner->ent_rev_packs = data_pack;
+        }
     }
 }
 
@@ -446,7 +464,26 @@ static void reg_data_receive_finish_aftermath_core(reg_data_t * reg_data)
 {
     if (reg_data->flag.receive_finsh_flag)
     {
+        reg_data->flag.receive_finsh_flag = 0;
         zst_event_send_exe_now(reg_data, DATA_PACK_ENENT_RECEIVE_FINSH, NULL);
+
+        // 对 receive 事件列表清空
+        reg_data_pack_t * data_pack = reg_data->ent_rev_packs;
+        while (NULL != data_pack)
+        {
+            reg_data_element_t * element = data_pack->ent_rev_elements;
+            while (NULL != element)
+            {
+                reg_data_element_t * temp_element = element->ent_rev_next;
+                element->ent_rev_next = NULL;
+                element = temp_element;
+            }
+            reg_data_pack_t * temp_pack = data_pack->ent_rev_next;
+            data_pack->ent_rev_elements = NULL;
+            data_pack->ent_rev_next = NULL;
+            data_pack = temp_pack;
+        }
+        reg_data->ent_rev_packs = NULL;
     }
 }
 
@@ -458,7 +495,6 @@ static void subscribe_element_check_core(reg_data_element_t * element)
     {
         if (1 == reg_data_element_diff_camp(element))
         {
-            element->owner->flag.camp_diff_flag = 1;
             element->flag.camp_diff_flag = 1;
             zst_event_send_exe_now(element, DATA_PACK_ENENT_ELEMENT_DIFF_CHECK, NULL);
         }
@@ -469,6 +505,8 @@ static void subscribe_element_aftermath_core(reg_data_element_t * element)
 {
     if (1 == element->flag.camp_diff_flag)
     {
+        element->flag.camp_diff_flag = 0;
+        element->owner->flag.camp_diff_flag = 1;
         reg_data_elemet_diff_eliminate(element);
         zst_event_send_exe_now(element, DATA_PACK_ENENT_ELEMENT_DIFF_AFTERMATH, NULL);
     }
@@ -478,7 +516,6 @@ static void subscribe_pack_check_core(reg_data_pack_t * data_pack)
 {
     if (data_pack->flag.camp_diff_flag)
     {
-        data_pack->owner->flag.camp_diff_flag = 1;
         zst_event_send_exe_now(data_pack, DATA_PACK_ENENT_ELEMENT_DIFF_CHECK, NULL);
     }
 }
@@ -487,6 +524,7 @@ static void subscribe_pack_aftermath_core(reg_data_pack_t * data_pack)
 {
     if (data_pack->flag.camp_diff_flag)
     {
+        data_pack->flag.camp_diff_flag = 0;
         data_pack->owner->flag.camp_diff_flag = 1;
         zst_event_send_exe_now(data_pack, DATA_PACK_ENENT_ELEMENT_DIFF_AFTERMATH, NULL);
     }
@@ -496,6 +534,7 @@ static void subscribe_reg_data_aftermath_core(reg_data_t * reg_data)
 {
     if (reg_data->flag.camp_diff_flag)
     {
+        reg_data->flag.camp_diff_flag = 0;
         zst_event_send_exe_now(reg_data, DATA_PACK_ENENT_ELEMENT_DIFF_AFTERMATH, NULL);
     }
 }
