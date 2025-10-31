@@ -14,7 +14,7 @@ typedef struct
 	float P;
 	float I;
 	float D;
-	uint32_t maxVal; //绝对值最值
+	int32_t maxVal; //绝对值最值
 	ZST_PID_CALC_TYPE last_diff;
 	ZST_PID_CALC_TYPE i_val;
 }zst_pid_t;
