@@ -80,8 +80,8 @@ int reg_data_pack_init(reg_data_t * reg_data, reg_data_pack_init_t * reg_data_pa
     {
         for (uint16_t pos = 0; pos < reg_data_pack_init->element_array_size; pos++)
         {
-            void * elemrnt_val = (void *)&reg_data_pack_init->element_array[pos];
-            if(0 != cc_hash_map_set_new( reg_data->data_pack, (void *)(uintptr_t)(reg_data_pack_init->addr + pos), elemrnt_val))
+            reg_data_element_t  * element = &reg_data_pack_init->element_array[pos];
+            if( (NULL != element->data) && ( 0 != cc_hash_map_set_new( reg_data->data_pack, (void *)(uintptr_t)(reg_data_pack_init->addr + pos), (void *)element) ) )
             {
                 ZST_LOGE(LOG_TAG, "add failed");
                 return -1;
@@ -114,7 +114,6 @@ int reg_data_get_type(const reg_data_t * reg_data, DATA_PACK_TYPE_T * data_pack_
 
 /**
  * @description: 设置 `element` 的接收完成标志
- *  @note 不要在中断中使用它，由于不具备 volatile 属性与原子操作（结构体），可能会导致标志位设置失败导致丢失
  * @param {reg_data_element_t *} reg_data_element
  * @param {uint8_t} flag
  * @return {*}
@@ -127,15 +126,15 @@ int reg_data_element_set_receive_finsh_flag(reg_data_element_t * reg_data_elemen
 }
 
 /**
- * @description: 获取 `element` 的接收完成标志
+ * @description: 设置 `element` 的发送完成标志
  * @param {reg_data_element_t *} reg_data_element
- * @param {uint8_t *} flag 1表示接收完成; 0表示未接收完成
+ * @param {uint8_t} flag
  * @return {*}
  */
-int reg_data_element_get_receive_finsh_flag(const reg_data_element_t * reg_data_element, uint8_t * flag)
+int reg_data_element_set_transmit_finsh_flag(reg_data_element_t * reg_data_element, uint8_t flag)
 {
-    if (NULL == reg_data_element || NULL == flag) return -1;
-    *flag = reg_data_element->flag.receive_finsh_flag;
+    if (NULL == reg_data_element) return -1;
+    reg_data_element->flag.transmit_finsh_flag = flag;
     return 0;
 }
 
@@ -219,25 +218,20 @@ int reg_data_core_run(reg_data_t * reg_data)
         reg_data_element_t * element = NULL;
         uint16_t addr;
         size_t index = 0;
-        size_t total_element = 0;
         while (0 == reg_data_get_pack_iter_next_s(&iter, &element, &addr, &index))
         {
             reg_data_element_check(element);
-            if (index - total_element == element->owner->element_array.elem_nums-1)
+            if (reg_data_element_get_addr(element) == element->owner->element_array.elem_nums-1)
             {
-                total_element += element->owner->element_array.elem_nums;
                 reg_data_pack_check(element->owner);
             }
         }
-        // aftermath
         reg_data_get_pack_iter_init_s(&iter, reg_data);
-        total_element = 0;
         while (0 == reg_data_get_pack_iter_next_s(&iter, &element, &addr, &index))
         {
             reg_data_element_aftermath(element);
-            if (index - total_element == element->owner->element_array.elem_nums-1)
+            if (reg_data_element_get_addr(element) == element->owner->element_array.elem_nums-1)
             {
-                total_element += element->owner->element_array.elem_nums;
                 reg_data_pack_aftermath(element->owner);
             }
         }
@@ -368,6 +362,12 @@ static void reg_data_pack_receive_finish_check_core(reg_data_pack_t * data_pack)
 static void reg_data_pack_receive_finish_aftermath_core(reg_data_pack_t * data_pack);
 static void reg_data_receive_finish_aftermath_core(reg_data_t * reg_data);
 
+static void reg_data_element_transmit_finsh_check_core(reg_data_element_t * element);
+static void reg_data_element_transmit_finsh_aftermath_core(reg_data_element_t * element);
+static void reg_data_pack_transmit_finsh_check_core(reg_data_pack_t * data_pack);
+static void reg_data_pack_transmit_finsh_aftermath_core(reg_data_pack_t * data_pack);
+static void reg_data_transmit_finsh_aftermath_core(reg_data_t * reg_data);
+
 static void subscribe_element_check_core(reg_data_element_t * element);
 static void subscribe_element_aftermath_core(reg_data_element_t * element);
 static void subscribe_pack_check_core(reg_data_pack_t * data_pack);
@@ -379,24 +379,28 @@ static void subscribe_reg_data_aftermath_core(reg_data_t * reg_data);
 static void reg_data_element_check(reg_data_element_t * element)
 {
     reg_data_element_receive_finish_check_core(element);
+    reg_data_element_transmit_finsh_check_core(element);
     subscribe_element_check_core(element);
 }
 
 static void reg_data_element_aftermath(reg_data_element_t * element)
 {
     reg_data_element_receive_finish_aftermath_core(element);
+    reg_data_element_transmit_finsh_aftermath_core(element);
     subscribe_element_aftermath_core(element);
 }
 
 static void reg_data_pack_check(reg_data_pack_t * data_pack)
 {
     reg_data_pack_receive_finish_check_core(data_pack);
+    reg_data_pack_transmit_finsh_check_core(data_pack);
     subscribe_pack_check_core(data_pack);
 }
 
 static void reg_data_pack_aftermath(reg_data_pack_t * data_pack)
 {
     reg_data_pack_receive_finish_aftermath_core(data_pack);
+    reg_data_pack_transmit_finsh_aftermath_core(data_pack);
     subscribe_pack_aftermath_core(data_pack);
 }
 
@@ -404,6 +408,7 @@ static void reg_data_pack_aftermath(reg_data_pack_t * data_pack)
 static void reg_data_aftermath(reg_data_t * reg_data)
 {
     reg_data_receive_finish_aftermath_core(reg_data);
+    reg_data_transmit_finsh_aftermath_core(reg_data);
     subscribe_reg_data_aftermath_core(reg_data);
 }
 
@@ -486,7 +491,43 @@ static void reg_data_receive_finish_aftermath_core(reg_data_t * reg_data)
         reg_data->ent_rev_packs = NULL;
     }
 }
+// ======================== reg data 发送事件 ==================================
+static void reg_data_element_transmit_finsh_check_core(reg_data_element_t * element)
+{
+    if (element->flag.transmit_finsh_flag)
+    {
+        element->flag.transmit_finsh_flag = 0;
+        element->owner->flag.transmit_finsh_flag = 1;
+        zst_event_send_exe_now(element, DATA_PACK_ENENT_TRANSMIT_FINSH, NULL);
+    }
+}
 
+static void reg_data_element_transmit_finsh_aftermath_core(reg_data_element_t * element)
+{
+}
+
+static void reg_data_pack_transmit_finsh_check_core(reg_data_pack_t * data_pack)
+{
+    if (data_pack->flag.transmit_finsh_flag)
+    {
+        data_pack->flag.transmit_finsh_flag = 0;
+        data_pack->owner->flag.transmit_finsh_flag = 1;
+        zst_event_send_exe_now(data_pack, DATA_PACK_ENENT_TRANSMIT_FINSH, NULL);
+    }
+}
+
+static void reg_data_pack_transmit_finsh_aftermath_core(reg_data_pack_t * data_pack)
+{
+    
+}
+static void reg_data_transmit_finsh_aftermath_core(reg_data_t * reg_data)
+{
+    if (reg_data->flag.transmit_finsh_flag)
+    {
+        reg_data->flag.transmit_finsh_flag = 0;
+        zst_event_send_exe_now(reg_data, DATA_PACK_ENENT_TRANSMIT_FINSH, NULL);
+    }
+}
 
 // ======================== reg data 订阅事件 ==================================
 static void subscribe_element_check_core(reg_data_element_t * element)
