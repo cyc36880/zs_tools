@@ -7,6 +7,7 @@ extern "C" {
 #endif
 
 #include "./iremote/zst_iremote.h"
+#include "./ultrasound/zst_ultr.h"
 
 
 

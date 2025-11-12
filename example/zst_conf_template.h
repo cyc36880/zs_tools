@@ -56,6 +56,7 @@ extern "C" {
 
 #if ZST_DEVICES
     #define ZST_DEVICE_IRMOTE 1
+    #define ZST_DEVICE_ULTR   1
 #endif
 
 #if (ZST_USE_REGISTER == 1)
