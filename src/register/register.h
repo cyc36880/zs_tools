@@ -117,9 +117,9 @@ int reg_data_get_pack_iter_init_s(reg_data_iter_s_t * iter, reg_data_t * reg_dat
 int reg_data_get_pack_iter_next_s(reg_data_iter_s_t * iter, reg_data_element_t ** reg_data_element, uint16_t * addr, size_t * index);
 
 
+#endif /* ZST_USE_REGISTER  */
 #ifdef __cplusplus
 }
 #endif
-#endif /* ZST_USE_REGISTER  */
 #endif /* __REGISTER_H__ */
 
