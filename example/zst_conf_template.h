@@ -59,12 +59,6 @@ extern "C" {
     #define ZST_DEVICE_ULTR   1
 #endif
 
-#if (ZST_USE_REGISTER == 1)
-    // 0:addr8, 1:addr16
-    #define ZST_REGISTER_ADDR16    0
-    #define SZT_TRGISTER_USE_NAME  1
-#endif
-
 #if (ZST_USE_PID == 1)
     // only float or double
     #define ZST_PID_CALC_TYPE  float
