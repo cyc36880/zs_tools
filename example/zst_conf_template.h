@@ -9,6 +9,9 @@ extern "C" {
 #include "stdbool.h"
 #include <stddef.h>
 
+// #define ZST_DEBUG
+#define ZST_RELEASE
+
 #define ZST_USE_ALLOC    0
 #define ZST_TICK_CUSTOM  0
 #define ZST_USE_LOG      1
@@ -21,6 +24,8 @@ extern "C" {
 #define ZST_SHA256       0
 #define ZST_DEVICES      0
 #define ZST_DRIVER       0
+
+
 
 #if ZST_USE_ALLOC
     #define ZST_MEM_LOG    1
@@ -52,7 +57,11 @@ extern "C" {
 
 #if ZST_USE_LOG
     // 0 - 6
-    #define ZST_LOG_LEVEL  0
+    #ifdef ZST_DEBUG
+        #define ZST_LOG_LEVEL  4
+    #else
+        #define ZST_LOG_LEVEL  0
+    #endif
 #endif
 
 #if ZST_DEVICES
