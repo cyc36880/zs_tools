@@ -20,6 +20,7 @@ extern "C" {
 #define ZST_USE_PID      0
 #define ZST_SHA256       0
 #define ZST_DEVICES      0
+#define ZST_DRIVER       0
 
 #if ZST_USE_ALLOC
     #define ZST_MEM_LOG    1
@@ -55,8 +56,12 @@ extern "C" {
 #endif
 
 #if ZST_DEVICES
-    #define ZST_DEVICE_IRMOTE 1
-    #define ZST_DEVICE_ULTR   1
+    #define ZST_DEVICE_IRMOTE 0
+    #define ZST_DEVICE_ULTR   0
+#endif
+
+#if ZST_DRIVER
+    #define ZST_SOFT_I2C     0
 #endif
 
 #if (ZST_USE_PID == 1)
