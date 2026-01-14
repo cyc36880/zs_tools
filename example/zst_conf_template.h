@@ -50,18 +50,14 @@ extern "C" {
  *It removes the need to manually update the tick with `zst_tick_inc()`).
 */
 #if ZST_TICK_CUSTOM
-    #define ZST_TICK_CUSTOM_INCLUDE     "myMain.h"
-    #define ZST_TICK_CUSTOM_SYS_TIME    (GetTick())
+    #define ZST_TICK_CUSTOM_INCLUDE     "Arduino.h"
+    #define ZST_TICK_CUSTOM_SYS_TIME    (millis())
 #endif
 
 
 #if ZST_USE_LOG
     // 0 - 6
-    #ifdef ZST_DEBUG
-        #define ZST_LOG_LEVEL  4
-    #else
-        #define ZST_LOG_LEVEL  0
-    #endif
+    #define ZST_LOG_LEVEL  4
 #endif
 
 #if ZST_DEVICES
