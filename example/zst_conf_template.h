@@ -26,10 +26,9 @@ extern "C" {
 #define ZST_DRIVER       0
 
 
-
 #if ZST_USE_ALLOC
     #define ZST_MEM_LOG    1
-    #define ZST_MEM_CUSTOM 0
+    #define ZST_MEM_CUSTOM 1
     #if (ZST_MEM_CUSTOM)
         #define ZST_MEM_CUSTOM_INCLUDE     "stdlib.h"
         #define ZST_MEM_CUSTOM_ALLOC(x)     malloc(x)
@@ -63,6 +62,7 @@ extern "C" {
 #if ZST_DEVICES
     #define ZST_DEVICE_IRMOTE 0
     #define ZST_DEVICE_ULTR   0
+    #define ZST_DEVICE_BUTTON 0
 #endif
 
 #if ZST_DRIVER

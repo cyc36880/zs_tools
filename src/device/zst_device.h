@@ -6,9 +6,9 @@
 extern "C" {
 #endif
 
-#include "./iremote/zst_iremote.h"
-#include "./ultrasound/zst_ultr.h"
-
+#include "iremote/zst_iremote.h"
+#include "ultrasound/zst_ultr.h"
+#include "button/zst_button.h"
 
 
 
