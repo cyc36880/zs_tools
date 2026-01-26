@@ -25,8 +25,8 @@ typedef enum
     BTN_EVENT_PRESS,        // 按下瞬间
     BTN_EVENT_RELEASE,      // 普通释放瞬间（对应短按/连击）
     BTN_EVENT_LONG_START,   // 长按触发瞬间
-    BTN_EVENT_LONG_RELEASE, // 长按释放瞬间
     BTN_EVENT_LONG_HOLD,    // 长按期间持续触发
+    BTN_EVENT_LONG_RELEASE, // 长按释放瞬间
     BTN_EVENT_CLICK,        // 单击确认
     BTN_EVENT_DOUBLE_CLICK, // 双击确认
     BTN_EVENT_MULTI_CLICK   // 多击

@@ -111,7 +111,7 @@ void zst_button_process(zst_button_t *btn)
                     btn->state     = 0;
                     btn->last_tick = raw.tick;
                     // 发送专门的长按释放事件，param 传入 0 即可
-                    zst_event_send_exe_now(btn, BTN_EVENT_LONG_RELEASE, (void *)(uintptr_t)0);
+                    zst_event_send_exe_now(btn, BTN_EVENT_LONG_RELEASE, (void *)(uintptr_t)btn->long_hold_count);
                     btn->long_hold_count = 0; // 释放后清零
                 }
                 break;
