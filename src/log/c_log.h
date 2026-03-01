@@ -77,8 +77,8 @@ uint32_t clog_timestamp(void);
 
 // User 级别通常不需要位置信息，单独定义
 #define CLOGU(tag, format, ...)                                                                    \
-    clog_write(CLOG_USER, tag, CLOG_COLOR_U "U (%d) [%s]: " format CLOG_RESET_COLOR "\n",          \
-               clog_timestamp(), tag, ##__VA_ARGS__)
+    clog_write(CLOG_USER, "", CLOG_COLOR_U "" format CLOG_RESET_COLOR "\n",                        \
+               ##__VA_ARGS__)
 
 #define DEF_CLOG_DEFAULT_LEVEL ZST_LOG_LEVEL
 
@@ -102,12 +102,12 @@ uint32_t clog_timestamp(void);
     } while (0)
 
 /* 简写宏 */
-#define ZST_LOG(format, ...)       CLOGU("*", format, ##__VA_ARGS__)
-#define ZST_LOGE(tag, format, ...) CLOGE(tag, format, ##__VA_ARGS__)
-#define ZST_LOGW(tag, format, ...) CLOGW(tag, format, ##__VA_ARGS__)
-#define ZST_LOGI(tag, format, ...) CLOGI(tag, format, ##__VA_ARGS__)
-#define ZST_LOGD(tag, format, ...) CLOGD(tag, format, ##__VA_ARGS__)
-#define ZST_LOGV(tag, format, ...) CLOGV(tag, format, ##__VA_ARGS__)
+#define ZST_LOG(format, ...)       CLOG(E_CLOGU, "*", format, ##__VA_ARGS__)
+#define ZST_LOGE(tag, format, ...) CLOG(E_CLOGE, tag, format, ##__VA_ARGS__)
+#define ZST_LOGW(tag, format, ...) CLOG(E_CLOGW, tag, format, ##__VA_ARGS__)
+#define ZST_LOGI(tag, format, ...) CLOG(E_CLOGI, tag, format, ##__VA_ARGS__)
+#define ZST_LOGD(tag, format, ...) CLOG(E_CLOGD, tag, format, ##__VA_ARGS__)
+#define ZST_LOGV(tag, format, ...) CLOG(E_CLOGV, tag, format, ##__VA_ARGS__)
 
 
 #ifdef ZST_DEBUG
