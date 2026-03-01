@@ -31,11 +31,11 @@ void zst_init(void)
 
 void zst_task_handler(void)
 {
-    #if (ZST_USE_TIMER == 1)
-        zst_timer_handler(&zst_ztimer);
-    #endif
     #if (ZST_USE_PTASK == 1)
         ptask_run(&zst_ptask_list);
+    #endif
+    #if (ZST_USE_TIMER == 1)
+        zst_timer_handler(&zst_ztimer);
     #endif
 }
 
