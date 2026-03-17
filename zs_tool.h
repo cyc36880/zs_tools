@@ -6,7 +6,7 @@ extern "C" {
 #endif    
 
 #include "zst_conf.h"
-#include "./src/container/include/cc_all.h"
+#include "./src/component/cc/cc_inc.h"
 #include "./src/hal/zst_hal.h"
 #include "./src/log/c_log.h"
 #include "./src/misc/misc_include.h"

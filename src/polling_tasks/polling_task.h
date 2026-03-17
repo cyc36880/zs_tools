@@ -9,7 +9,7 @@ extern "C"
 #include "zst_conf.h"
 
 #if (ZST_USE_PTASK == 1)
-#include "../container/include/cc_all.h"
+#include "../component/cc/cc_inc.h"
 /**
  * | tasks    
  * --------------------------

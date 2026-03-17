@@ -2,6 +2,7 @@
 
 #if (ZST_USE_PTASK == 1)
 #include <string.h>
+#include "../misc/zst_mem.h"
 
 static void event_callback(ptask_t *task, ptask_event_t *e);
 

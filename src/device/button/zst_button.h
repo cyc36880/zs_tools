@@ -11,13 +11,13 @@ extern "C" {
 #include "../../event/zst_event.h"
 
 /** 配置参数 **/
-#define ZST_BTN_ACTIVE_LEVEL (1) // 有效电平：1-高电平，0-低电平
-#define BTN_RAW_FIFO_SIZE 8      // 建议设为 2 的幂次方
-#define BTN_DEBOUNCE_MS 20       // 逻辑消抖时间
-#define BTN_LONG_PRESS_MS 600    // 长按判定时间
-#define BTN_CLICK_GAP_MS 250     // 连击间隔时间
-#define BTN_IRQ_FILTER_MS 10     // 中断前置滤毛刺时间
-#define BTN_LONG_HOLD_MS 150     // 长按期间每隔 150ms 触发一次
+#define ZST_BTN_ACTIVE_LEVEL 1    // 有效电平：1-高电平，0-低电平
+#define BTN_RAW_FIFO_SIZE    8    // 建议设为 2 的幂次方
+#define BTN_DEBOUNCE_MS      20   // 逻辑消抖时间
+#define BTN_LONG_PRESS_MS    600  // 长按判定时间
+#define BTN_CLICK_GAP_MS     250  // 连击间隔时间
+#define BTN_IRQ_FILTER_MS    10   // 中断前置滤毛刺时间
+#define BTN_LONG_HOLD_MS     150  // 长按期间每隔 150ms 触发一次
 
 typedef enum
 {

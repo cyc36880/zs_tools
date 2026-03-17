@@ -8,7 +8,7 @@ extern "C" {
 
 #include "zst_conf.h"
 #if (ZST_USE_REGISTER == 1)
-#include "../container/include/cc_all.h"
+#include "../component/cc/cc_inc.h"
 #include "../event/zst_event.h"
 
 typedef cc_hash_map_iter_t reg_data_iter_s_t;
