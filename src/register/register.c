@@ -78,13 +78,24 @@ int reg_data_pack_init(reg_data_t * reg_data, reg_data_pack_init_t * reg_data_pa
 
     if (DATA_PACK_TYPE_SIGNAL_ADDR == reg_data->data_pack_type)
     {
-        for (uint16_t pos = 0; pos < reg_data_pack_init->element_array_size; pos++)
+        if (1 == reg_data->signal_mini_flag)
         {
-            reg_data_element_t  * element = &reg_data_pack_init->element_array[pos];
-            if( (NULL != element->data) && ( 0 != cc_hash_map_set_new( reg_data->data_pack, (void *)(uintptr_t)(reg_data_pack_init->addr + pos), (void *)element) ) )
+            if (0 != cc_hash_map_set_new( reg_data->data_pack, (void *)(uintptr_t)(reg_data_pack_init->addr), (void *)reg_data_pack_init->element_array) )
             {
                 ZST_LOGE(LOG_TAG, "add failed");
                 return -1;
+            }
+        }
+        else
+        {
+            for (uint16_t pos = 0; pos < reg_data_pack_init->element_array_size; pos++)
+            {
+                reg_data_element_t  * element = &reg_data_pack_init->element_array[pos];
+                if( (NULL != element->data) && ( 0 != cc_hash_map_set_new( reg_data->data_pack, (void *)(uintptr_t)(reg_data_pack_init->addr + pos), (void *)element) ) )
+                {
+                    ZST_LOGE(LOG_TAG, "add failed");
+                    return -1;
+                }
             }
         }
     }
@@ -214,11 +225,11 @@ int reg_data_core_run(reg_data_t * reg_data)
     if (DATA_PACK_TYPE_SIGNAL_ADDR == data_pack_type)
     {
         reg_data_iter_s_t iter;
-        reg_data_get_pack_iter_init_s(&iter, reg_data);
+        reg_data_get_pack_iter_init_s(reg_data, &iter);
         reg_data_element_t * element = NULL;
         uint16_t addr;
         size_t index = 0;
-        while (0 == reg_data_get_pack_iter_next_s(&iter, &element, &addr, &index))
+        while (0 == reg_data_get_pack_iter_next_s(reg_data, &iter, &element, &addr, &index))
         {
             reg_data_element_check(element);
             if (reg_data_element_get_addr(element) == element->owner->element_array.elem_nums-1)
@@ -226,8 +237,8 @@ int reg_data_core_run(reg_data_t * reg_data)
                 reg_data_pack_check(element->owner);
             }
         }
-        reg_data_get_pack_iter_init_s(&iter, reg_data);
-        while (0 == reg_data_get_pack_iter_next_s(&iter, &element, &addr, &index))
+        reg_data_get_pack_iter_init_s(reg_data, &iter);
+        while (0 == reg_data_get_pack_iter_next_s(reg_data, &iter, &element, &addr, &index))
         {
             reg_data_element_aftermath(element);
             if (reg_data_element_get_addr(element) == element->owner->element_array.elem_nums-1)
@@ -240,11 +251,11 @@ int reg_data_core_run(reg_data_t * reg_data)
     else if (DATA_PACK_TYPE_DOUBLE_ADDR == data_pack_type)
     {
         reg_data_iter_d_t data_iter;
-        reg_data_get_pack_iter_init_d(&data_iter, reg_data);
+        reg_data_get_pack_iter_init_d(reg_data, &data_iter);
         reg_data_pack_t * data_pack = NULL;
         uint16_t addr;
         size_t index = 0;
-        while (0 == reg_data_get_pack_iter_next_d(&data_iter, &data_pack, &addr, &index))
+        while (0 == reg_data_get_pack_iter_next_d(reg_data, &data_iter, &data_pack, &addr, &index))
         {
             reg_data_element_iter_t element_iter;
             reg_data_get_element_iter_init_d(&element_iter, data_pack);
@@ -257,8 +268,8 @@ int reg_data_core_run(reg_data_t * reg_data)
             }
             reg_data_pack_check(data_pack);
         }
-        reg_data_get_pack_iter_init_d(&data_iter, reg_data);
-        while (0 == reg_data_get_pack_iter_next_d(&data_iter, &data_pack, &addr, &index))
+        reg_data_get_pack_iter_init_d(reg_data, &data_iter);
+        while (0 == reg_data_get_pack_iter_next_d(reg_data, &data_iter, &data_pack, &addr, &index))
         {
             reg_data_element_iter_t element_iter;
             reg_data_get_element_iter_init_d(&element_iter, data_pack);
@@ -277,12 +288,12 @@ int reg_data_core_run(reg_data_t * reg_data)
 }
 
 // double addr
-int reg_data_get_pack_iter_init_d(reg_data_iter_d_t * iter, reg_data_t * reg_data)
+int reg_data_get_pack_iter_init_d(reg_data_t * reg_data, reg_data_iter_d_t * iter)
 {
-    return reg_data_get_pack_iter_init_s(iter, reg_data);
+    return reg_data_get_pack_iter_init_s(reg_data, iter);
 }
 
-int reg_data_get_pack_iter_next_d(reg_data_iter_d_t * iter, reg_data_pack_t ** reg_data_pack, uint16_t * addr, size_t * index)
+int reg_data_get_pack_iter_next_d(reg_data_t * reg_data, reg_data_iter_d_t * iter, reg_data_pack_t ** reg_data_pack, uint16_t * addr, size_t * index)
 {
     void * item = NULL;
     int ret = cc_hash_map_iter_next(iter, &item, index);
@@ -329,19 +340,45 @@ reg_data_element_t * reg_data_get_element_4addr_d(reg_data_pack_t * data_pack, u
 
 // signal addr
 
-int reg_data_get_pack_iter_init_s(reg_data_iter_s_t * iter, reg_data_t * reg_data)
+int reg_data_get_pack_iter_init_s(reg_data_t * reg_data, reg_data_iter_s_t * iter)
 {
     return cc_hash_map_iter_init(iter, reg_data->data_pack);
 }
 
-int reg_data_get_pack_iter_next_s(reg_data_iter_s_t * iter, reg_data_element_t ** reg_data_element, uint16_t * addr, size_t * index)
+int reg_data_get_pack_iter_next_s(reg_data_t * reg_data, reg_data_iter_s_t * iter, reg_data_element_t ** reg_data_element, uint16_t * addr, size_t * index)
 {
-    void * item = NULL;
-    int ret = cc_hash_map_iter_next(iter, &item, index);
-    if (0 != ret) return ret;
-    cc_map_item_t * map_item = (cc_map_item_t *)item;
-    if (NULL != addr) *addr = (uint16_t)(uintptr_t)map_item->key;
-    if (NULL != reg_data_element) *reg_data_element = (reg_data_element_t *)map_item->value;
+    int ret = 0;
+    if (1 == reg_data->signal_mini_flag)
+    {
+        if (NULL == reg_data_element)
+        {
+            ZST_LOGE(LOG_TAG, "reg_data_element is NULL");
+            return -1;
+        }
+        void * item = NULL;
+        if (NULL == *reg_data_element || (*reg_data_element)->owner->element_array.elem_nums-1 == reg_data_element_get_addr(*reg_data_element))
+        {
+            ret = cc_hash_map_iter_next(iter, &item, index);
+            if (0 != ret) return ret;
+            cc_map_item_t * map_item = (cc_map_item_t *)item;
+            if (NULL != addr) *addr = (uint16_t)(uintptr_t)map_item->key;
+            *reg_data_element = (reg_data_element_t *)map_item->value;
+        }
+        else
+        {
+            if (NULL != addr) *addr = *addr + reg_data_element_get_addr(*reg_data_element) + 1;
+            *reg_data_element = &( (reg_data_element_t *)(*reg_data_element)->owner->element_array.data )[reg_data_element_get_addr(*reg_data_element) + 1];
+        }
+    }
+    else
+    {
+        void * item = NULL;
+        ret = cc_hash_map_iter_next(iter, &item, index);
+        if (0 != ret) return ret;
+        cc_map_item_t * map_item = (cc_map_item_t *)item;
+        if (NULL != addr) *addr = (uint16_t)(uintptr_t)map_item->key;
+        if (NULL != reg_data_element) *reg_data_element = (reg_data_element_t *)map_item->value;
+    }
     return ret;
 }
 

@@ -77,6 +77,7 @@ typedef struct _reg_data_
     reg_data_pack_t           * ent_rev_packs;
     const DATA_PACK_TYPE_T    data_pack_type;
     reg_data_flag_t           flag;
+    uint8_t                   signal_mini_flag : 1; // 单地址mini
 } reg_data_t;
 
 typedef struct 
@@ -104,8 +105,8 @@ int reg_data_core_run(reg_data_t * reg_data);
 reg_data_pack_t * reg_data_get_pack_4addr_d(const reg_data_t * reg_data, uint16_t addr);
 reg_data_element_t * reg_data_get_element_4addr_d(reg_data_pack_t * data_pack, uint16_t addr2);
 // 迭代器
-int reg_data_get_pack_iter_init_d(reg_data_iter_d_t * iter, reg_data_t * reg_data);
-int reg_data_get_pack_iter_next_d(reg_data_iter_d_t * iter, reg_data_pack_t ** reg_data_pack, uint16_t * addr, size_t * index);
+int reg_data_get_pack_iter_init_d(reg_data_t * reg_data, reg_data_iter_d_t * iter);
+int reg_data_get_pack_iter_next_d(reg_data_t * reg_data, reg_data_iter_d_t * iter, reg_data_pack_t ** reg_data_pack, uint16_t * addr, size_t * index);
 int reg_data_get_element_iter_init_d(reg_data_element_iter_t * iter, reg_data_pack_t * reg_data_pack);
 int reg_data_get_element_iter_next_d(reg_data_element_iter_t * iter, reg_data_element_t ** reg_data_element, uint16_t * addr, size_t * index);
 
@@ -113,8 +114,8 @@ int reg_data_get_element_iter_next_d(reg_data_element_iter_t * iter, reg_data_el
 // when data_pack_type == DATA_PACK_TYPE_SIGNAL_ADDR
 reg_data_element_t * reg_data_get_element_4addr_s(const reg_data_t * reg_data, uint16_t addr);
 // 迭代器
-int reg_data_get_pack_iter_init_s(reg_data_iter_s_t * iter, reg_data_t * reg_data);
-int reg_data_get_pack_iter_next_s(reg_data_iter_s_t * iter, reg_data_element_t ** reg_data_element, uint16_t * addr, size_t * index);
+int reg_data_get_pack_iter_init_s(reg_data_t * reg_data, reg_data_iter_s_t * iter);
+int reg_data_get_pack_iter_next_s(reg_data_t * reg_data, reg_data_iter_s_t * iter, reg_data_element_t ** reg_data_element, uint16_t * addr, size_t * index);
 
 
 #endif /* ZST_USE_REGISTER  */
