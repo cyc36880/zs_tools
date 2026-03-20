@@ -68,6 +68,7 @@ typedef struct _reg_data_pack_
     reg_data_element_t        * ent_rev_elements; 
     cc_array_t                element_array;
     reg_data_flag_t           flag;
+    uint8_t                   addr;
 } reg_data_pack_t;
 
 typedef struct _reg_data_

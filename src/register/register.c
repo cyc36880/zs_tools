@@ -63,6 +63,7 @@ int reg_data_pack_init(reg_data_t * reg_data, reg_data_pack_init_t * reg_data_pa
         ZST_LOGE(LOG_TAG, "reg_data->data_pack is NULL");
         return -2;
     }
+    reg_data_pack_init->reg_data_pack->addr  = reg_data_pack_init->addr;
     reg_data_pack_init->reg_data_pack->owner = reg_data;
     reg_data_pack_init->reg_data_pack->comparison_buffer = reg_data_pack_init->comparison_buffer;
     for (uint16_t pos = 0; pos < reg_data_pack_init->element_array_size; pos++)
@@ -80,7 +81,7 @@ int reg_data_pack_init(reg_data_t * reg_data, reg_data_pack_init_t * reg_data_pa
     {
         if (1 == reg_data->signal_mini_flag)
         {
-            if (0 != cc_hash_map_set_new( reg_data->data_pack, (void *)(uintptr_t)(reg_data_pack_init->addr), (void *)reg_data_pack_init->element_array) )
+            if (0 != cc_hash_map_set_new( reg_data->data_pack, (void *)(uintptr_t)(reg_data_pack_init->addr), (void *)reg_data_pack_init->reg_data_pack) )
             {
                 ZST_LOGE(LOG_TAG, "add failed");
                 return -1;
@@ -362,7 +363,7 @@ int reg_data_get_pack_iter_next_s(reg_data_t * reg_data, reg_data_iter_s_t * ite
             if (0 != ret) return ret;
             cc_map_item_t * map_item = (cc_map_item_t *)item;
             if (NULL != addr) *addr = (uint16_t)(uintptr_t)map_item->key;
-            *reg_data_element = (reg_data_element_t *)map_item->value;
+            *reg_data_element = (reg_data_element_t  *)((reg_data_pack_t *)map_item->value)->element_array.data;
         }
         else
         {
@@ -385,8 +386,32 @@ int reg_data_get_pack_iter_next_s(reg_data_t * reg_data, reg_data_iter_s_t * ite
 reg_data_element_t * reg_data_get_element_4addr_s(const reg_data_t * reg_data, uint16_t addr)
 {
     reg_data_element_t * element = NULL;
-    if (NULL == reg_data || NULL == reg_data->data_pack) return NULL;
-    cc_hash_map_get(reg_data->data_pack, (void *)(uintptr_t)addr, (void **)&element);
+    if (1 == reg_data->signal_mini_flag)
+    {
+        size_t index = 0;
+        reg_data_iter_s_t iter;
+        void * item = NULL;
+        uint8_t data_pack_addr = 0;
+        reg_data_pack_t * data_pack = NULL;
+        reg_data_get_pack_iter_init_s((reg_data_t *)reg_data, &iter);
+        while (0 == cc_hash_map_iter_next(&iter, &item, &index))
+        {
+            cc_map_item_t * map_item = (cc_map_item_t *)item;
+            data_pack_addr = (uint16_t)(uintptr_t)map_item->key;
+            data_pack = (reg_data_pack_t *)map_item->value;
+            if (addr >= data_pack_addr && addr < data_pack_addr + data_pack->element_array.elem_nums)
+            {
+                element = &((reg_data_element_t *)data_pack->element_array.data)[addr - data_pack_addr];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (NULL == reg_data || NULL == reg_data->data_pack) return NULL;
+        cc_hash_map_get(reg_data->data_pack, (void *)(uintptr_t)addr, (void **)&element);
+    }
+    
     return element;
 }
 
