@@ -36,6 +36,7 @@ int reg_data_init(reg_data_t * reg_data, uint16_t hash_capacity)
         ZST_LOGE(LOG_TAG, "reg_data not init");
         return -2;
     }
+    if (1 == reg_data->mini_flag) hash_capacity = 1;
     cc_hash_map_new(&reg_data->data_pack, hash_capacity, NULL, NULL);
     if (NULL == reg_data->data_pack)
     {
@@ -79,7 +80,7 @@ int reg_data_pack_init(reg_data_t * reg_data, reg_data_pack_init_t * reg_data_pa
 
     if (DATA_PACK_TYPE_SIGNAL_ADDR == reg_data->data_pack_type)
     {
-        if (1 == reg_data->signal_mini_flag)
+        if (1 == reg_data->mini_flag)
         {
             if (0 != cc_hash_map_set_new( reg_data->data_pack, (void *)(uintptr_t)(reg_data_pack_init->addr), (void *)reg_data_pack_init->reg_data_pack) )
             {
@@ -349,7 +350,7 @@ int reg_data_get_pack_iter_init_s(reg_data_t * reg_data, reg_data_iter_s_t * ite
 int reg_data_get_pack_iter_next_s(reg_data_t * reg_data, reg_data_iter_s_t * iter, reg_data_element_t ** reg_data_element, uint16_t * addr, size_t * index)
 {
     int ret = 0;
-    if (1 == reg_data->signal_mini_flag)
+    if (1 == reg_data->mini_flag)
     {
         if (NULL == reg_data_element)
         {
@@ -386,7 +387,7 @@ int reg_data_get_pack_iter_next_s(reg_data_t * reg_data, reg_data_iter_s_t * ite
 reg_data_element_t * reg_data_get_element_4addr_s(const reg_data_t * reg_data, uint16_t addr)
 {
     reg_data_element_t * element = NULL;
-    if (1 == reg_data->signal_mini_flag)
+    if (1 == reg_data->mini_flag)
     {
         size_t index = 0;
         reg_data_iter_s_t iter;

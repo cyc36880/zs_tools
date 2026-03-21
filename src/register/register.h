@@ -77,8 +77,8 @@ typedef struct _reg_data_
     cc_hash_map_t             * data_pack;
     reg_data_pack_t           * ent_rev_packs;
     const DATA_PACK_TYPE_T    data_pack_type;
+    const uint8_t             mini_flag : 1; // mini
     reg_data_flag_t           flag;
-    uint8_t                   signal_mini_flag : 1; // 单地址mini
 } reg_data_t;
 
 typedef struct 
