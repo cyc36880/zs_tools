@@ -11,7 +11,7 @@ void zst_init(void);
 void zst_task_handler(void);
 
 #if (ZST_USE_TIMER == 1)
-    extern ztimer_t zst_ztimer;
+    extern zst_timer_group_t zst_ztimer;
 #endif
 
 #if (ZST_USE_PTASK == 1)

@@ -7,7 +7,7 @@
 #endif
 
 #if (ZST_USE_TIMER == 1)
-    ztimer_t zst_ztimer;
+    zst_timer_group_t zst_ztimer;
 #endif
 
 #if (ZST_USE_PTASK == 1)
