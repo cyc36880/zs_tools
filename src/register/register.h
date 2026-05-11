@@ -55,7 +55,7 @@ typedef struct _reg_data_element_
     struct _reg_data_element_ * ent_rev_next;
     uint16_t                  data_size;
     uint8_t                   subscribe  : 1; // 订阅; 订阅后，查找是否与内存数据不同
-    reg_data_flag_t           flag;
+    volatile reg_data_flag_t  flag;
 } reg_data_element_t;
 
 typedef struct _reg_data_pack_
@@ -67,7 +67,7 @@ typedef struct _reg_data_pack_
     struct _reg_data_pack_    * ent_rev_next;
     reg_data_element_t        * ent_rev_elements; 
     cc_array_t                element_array;
-    reg_data_flag_t           flag;
+    volatile reg_data_flag_t  flag;
     uint8_t                   addr;
 } reg_data_pack_t;
 
@@ -78,7 +78,7 @@ typedef struct _reg_data_
     reg_data_pack_t           * ent_rev_packs;
     const DATA_PACK_TYPE_T    data_pack_type;
     const uint8_t             mini_flag : 1; // mini
-    reg_data_flag_t           flag;
+    volatile reg_data_flag_t  flag;
 } reg_data_t;
 
 typedef struct 
