@@ -55,6 +55,8 @@ typedef struct _reg_data_element_
     struct _reg_data_element_ * ent_rev_next;
     uint16_t                  data_size;
     uint8_t                   subscribe  : 1; // 订阅; 订阅后，查找是否与内存数据不同
+    uint8_t                   rxfinsh_sync_now : 1; // 接收完成，立即同步接收完成信号
+    uint8_t                   txfinsh_sync_now : 1; // 发送完成，立即同步发送完成信号
     volatile reg_data_flag_t  flag;
 } reg_data_element_t;
 

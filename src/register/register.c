@@ -135,6 +135,11 @@ int reg_data_element_set_receive_finsh_flag(reg_data_element_t * reg_data_elemen
 {
     if (NULL == reg_data_element) return -1;
     reg_data_element->flag.receive_finsh_flag = flag;
+    if (1 == flag && 1 == reg_data_element->rxfinsh_sync_now)
+    {
+        zst_event_send_exe_now(reg_data_element, DATA_PACK_ENENT_RECEIVE_FINSH, NULL);
+        reg_data_element_set_receive_finsh_flag(reg_data_element, 0);
+    }
     return 0;
 }
 
@@ -148,6 +153,11 @@ int reg_data_element_set_transmit_finsh_flag(reg_data_element_t * reg_data_eleme
 {
     if (NULL == reg_data_element) return -1;
     reg_data_element->flag.transmit_finsh_flag = flag;
+    if (1 == flag && 1 == reg_data_element->txfinsh_sync_now)
+    {
+        zst_event_send_exe_now(reg_data_element, DATA_PACK_ENENT_TRANSMIT_FINSH, NULL);
+        reg_data_element_set_transmit_finsh_flag(reg_data_element, 0);
+    }
     return 0;
 }
 
