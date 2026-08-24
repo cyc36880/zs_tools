@@ -1,5 +1,5 @@
-#ifndef __zst_soft_i2c_H__
-#define __zst_soft_i2c_H__
+#ifndef __ZST_SOFT_I2C_H__
+#define __ZST_SOFT_I2C_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,4 +55,4 @@ int zst_soft_i2c_read_reg(zst_soft_i2c_t * self, uint8_t device_address, uint8_t
 }
 #endif
 
-#endif /* __zst_soft_i2c_H__ */
+#endif /* __ZST_SOFT_I2C_H__ */

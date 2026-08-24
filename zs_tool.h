@@ -16,6 +16,7 @@ extern "C" {
 #include "./src/polling_tasks/polling_task.h"
 #include "./src/register/register.h"
 #include "./src/device/zst_device.h"
+#include "./src/driver/zst_driver.h"
 
 #ifdef __cplusplus
 }

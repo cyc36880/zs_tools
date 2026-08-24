@@ -1,5 +1,5 @@
-#ifndef __FILENAME_H__
-#define __FILENAME_H__
+#ifndef __ZST_DEVICE_H__
+#define __ZST_DEVICE_H__
 
 
 #ifdef __cplusplus
