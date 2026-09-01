@@ -8,7 +8,7 @@ extern "C" {
 
 
 #include "zst_hal_tick.h"
-
+#include "zst_hal_delay.h"
 
 
 #ifdef __cplusplus

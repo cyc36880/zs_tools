@@ -9,7 +9,7 @@ extern "C" {
 #include "iremote/zst_iremote.h"
 #include "ultrasound/zst_ultr.h"
 #include "button/zst_button.h"
-
+#include "dht11/zst_dht11.h"
 
 
 #ifdef __cplusplus
