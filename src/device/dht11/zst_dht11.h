@@ -10,7 +10,7 @@ extern "C" {
 #if ZST_DEVICE_DHT11 == 1
 
 /**
- * 读取间隔在1s左右
+ * 读取间隔在2s左右
  */
 
 typedef struct _zst_dht11_
@@ -23,6 +23,7 @@ typedef struct _zst_dht11_
 
 
 void zst_dht11_init(zst_dht11_t * handle);
+int zst_dht11_read_original(zst_dht11_t * handle, uint8_t * temp_h, uint8_t * temp_l, uint8_t * hum_h, uint8_t * hum_l);
 int zst_dht11_read(zst_dht11_t * handle, float * temperature, float * humidity);
 
 #endif /* ZST_DEVICE_DHT11 == 1 */

@@ -15,7 +15,7 @@ void zst_dht11_init(zst_dht11_t * handle)
     handle->pin_write(handle, 1);
 }
 
-int zst_dht11_read(zst_dht11_t * handle, float * temperature, float * humidity)
+int zst_dht11_read_original(zst_dht11_t * handle, uint8_t * temp_h, uint8_t * temp_l, uint8_t * hum_h, uint8_t * hum_l)
 {
     if (NULL == handle || NULL == handle->pin_mode || NULL == handle->pin_write || NULL == handle->pin_read)
     {
@@ -72,25 +72,42 @@ int zst_dht11_read(zst_dht11_t * handle, float * temperature, float * humidity)
     }
 
     // 解析数据
+    if (temp_h) *temp_h = buffer[2];
+    if (temp_l) *temp_l = buffer[3];
+    if (hum_h) *hum_h = buffer[0];
+    if (hum_l) *hum_l = buffer[1];
+
+    return 0;
+}
+
+int zst_dht11_read(zst_dht11_t * handle, float * temperature, float * humidity)
+{
+    uint8_t temp_h = 0, temp_l = 0, hum_h = 0, hum_l = 0;
+    if (0 != zst_dht11_read_original(handle, &temp_h, &temp_l, &hum_h, &hum_l))
+    {
+        return -1;
+    }
+
+    // 解析数据
     if (humidity) 
     {
-        float fractional = buffer[1];
-        while (fractional > 0)
+        float fractional = hum_l;
+        while (fractional > 1)
         {
             fractional /= 10;
         }
-        *humidity = buffer[0] + fractional;
+        *humidity = hum_h + fractional;
     }
     if (temperature) 
     {
         float temp = 0;
-        float fractional = buffer[3] & 0x7F;
-        while (fractional > 0)
+        float fractional = temp_l & 0x7F;
+        while (fractional > 1)
         {
             fractional /= 10;
         }
-        temp = buffer[2] + fractional;
-        if (buffer[3] & 0x80) temp = -temp; // 判断是否为负数
+        temp = temp_h + fractional;
+        if (temp_l & 0x80) temp = -temp; // 判断是否为负数
         *temperature = temp;
     }
     
