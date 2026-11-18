@@ -27,12 +27,23 @@ struct zst_soft_i2c
     void (*sda_write)(zst_soft_i2c_t *self, uint8_t);
     uint8_t (*sda_read)(zst_soft_i2c_t *self);
 
-    uint16_t delay_time_us; // i2c 通讯时钟延时；默认5us，即i2c速度为100k
-    uint16_t waitack_delay_time_us; //等待应答时间
+    uint16_t delay_time_us; // Phase delay: default 10 us, setter minimum 5 us.
+    uint16_t waitack_delay_time_us; // Extra ACK polling time in us, default 10 us.
 
     void * user_data;
+    /* Required: read the physical SCL input, not the output latch. */
+    uint8_t (*scl_read)(zst_soft_i2c_t *self);
+    uint16_t stretch_timeout_us; // Per rising edge; default 10000 us.
 };
 
+/* Single-master, 7-bit addresses (not shifted). External pull-ups required.
+ * SDA/SCL outputs must be open-drain; write(1) means release, not drive high.
+ * Optional SDA direction callbacks may be omitted for open-drain GPIO.
+ * Initialize GPIO and the us timer before init(), which releases the bus.
+ * scl_read is required. Clock stretching is supported; arbitration is not.
+ * Transfers return -1 on NACK, stuck bus, SCL timeout or invalid arguments.
+ * Use the delay setter (minimum 5 us), rather than writing the field directly.
+ */
 void zst_soft_i2c_init(zst_soft_i2c_t * self);
 
 void zst_soft_i2c_set_delay_time_us(zst_soft_i2c_t * self, uint16_t delay_time_us);
